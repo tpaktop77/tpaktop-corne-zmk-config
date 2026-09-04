@@ -27,4 +27,4 @@
 - [x] 5.1 Выполнить `git diff --check`, структурные проверки 42 bindings/15 layers/positional combo, YAML parse и `openspec validate migrate-layout-to-dongle --strict`; устранить все ошибки.
 - [x] 5.2 Закоммитить и отправить рабочую ветку, дождаться успешной GitHub Actions сборки всех четырёх targets и проверить содержимое датированного artifact.
 - [x] 5.3 Зафиксировать номера run/jobs и автоматические результаты в test matrix, повторить статические/OpenSpec проверки и отметить все реально завершённые tasks.
-- [ ] 5.4 Создать pull request в `master` с summary, ссылками на OpenSpec artifacts, source commit, build evidence, provisioning warning и списком аппаратных `manual pending` тестов.
+- [x] 5.4 Создать pull request в `master` с summary, ссылками на OpenSpec artifacts, source commit, build evidence, provisioning warning и списком аппаратных `manual pending` тестов: PR #1.

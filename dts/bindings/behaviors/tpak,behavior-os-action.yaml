@@ -1,0 +1,10 @@
+description: Sends an OS-aware HID action
+
+compatible: "tpak,behavior-os-action"
+
+include: one_param.yaml
+
+properties:
+  bindings:
+    type: phandle-array
+    required: true

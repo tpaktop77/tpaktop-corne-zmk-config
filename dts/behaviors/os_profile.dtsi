@@ -1,0 +1,22 @@
+/*
+ * Copyright (c) 2026 tpak
+ * SPDX-License-Identifier: MIT
+ */
+
+/ {
+        behaviors {
+                os_set: os_set {
+                        compatible = "tpak,behavior-os-set";
+                        #binding-cells = <1>;
+                        display-name = "Set OS Profile";
+                };
+
+                os_action: os_action {
+                        compatible = "tpak,behavior-os-action";
+                        #binding-cells = <1>;
+                        // Placeholder satisfies &kp's binding cell; the behavior overwrites it per action.
+                        bindings = <&kp 0>;
+                        display-name = "OS Action";
+                };
+        };
+};

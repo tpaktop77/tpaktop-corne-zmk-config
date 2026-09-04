@@ -1,5 +1,23 @@
+name: Build ZMK firmware
+
 on: [push, pull_request, workflow_dispatch]
 
+permissions:
+  contents: read
+
 jobs:
+  metadata:
+    runs-on: ubuntu-latest
+    outputs:
+      build_timestamp: ${{ steps.timestamp.outputs.value }}
+    steps:
+      - name: Generate UTC build timestamp
+        id: timestamp
+        shell: bash
+        run: echo "value=$(date -u +'%Y%m%d_%H%M')" >> "$GITHUB_OUTPUT"
+
   build:
+    needs: metadata
     uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@v0.3
+    with:
+      archive_name: corne-dongle-firmware_${{ needs.metadata.outputs.build_timestamp }}

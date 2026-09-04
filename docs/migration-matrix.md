@@ -8,11 +8,11 @@
 
 | Source | Source behavior | Target | Target behavior | Status | Validation |
 |---|---|---|---|---|---|
-| view repo `e7d7c10` | `corne_left` central | `tpaktop_corne_dongle` | headless central на `nice_nano_v2` | implemented; CI pending | dongle build + USB/BLE manual |
-| view repo `e7d7c10` | left/right split roles | `corne_left`, `corne_right` | две BLE peripherals | implemented; CI pending | both builds + reconnection manual |
-| view repo `e7d7c10` | Studio snippet на left | dongle build | Studio USB RPC на central | implemented; CI pending | Studio connect manual |
-| view repo nice!view custom widget | layer/profile/art UI | peripheral built-in status | local battery/charging + split link; dedicated display queue | implemented; CI pending | Kconfig + both displays manual |
-| view repo workflow | две UF2 в `firmware.zip` | four-target workflow | dongle/left/right/reset + timestamp archive | implemented; CI pending | Actions artifact audit |
+| view repo `e7d7c10` | `corne_left` central | `tpaktop_corne_dongle` | headless central на `nice_nano_v2` | implemented; CI pass | run 33918196591; USB/BLE manual |
+| view repo `e7d7c10` | left/right split roles | `corne_left`, `corne_right` | две BLE peripherals | implemented; CI pass | both builds pass; reconnection manual |
+| view repo `e7d7c10` | Studio snippet на left | dongle build | Studio USB RPC на central | implemented; CI pass | dongle Studio build pass; connect manual |
+| view repo nice!view custom widget | layer/profile/art UI | peripheral built-in status | local battery/charging + split link; dedicated display queue | implemented; CI pass | both nice!view builds pass; displays manual |
+| view repo workflow | две UF2 в `firmware.zip` | four-target workflow | dongle/left/right/reset + timestamp archive | implemented; CI pass | artifact `corne-dongle-firmware_20260904_2050`, four UF2 audited |
 | view repo keymap/module | полный рабочий baseline | общий central keymap/module | bindings и timings без изменений | implemented; source parity pass | checksum + regression matrix |
 
 ## Слои и общие behaviors

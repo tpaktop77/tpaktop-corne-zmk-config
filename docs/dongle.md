@@ -10,7 +10,7 @@
 
 ## Содержимое firmware artifact
 
-GitHub Actions Actions создаёт архив вида:
+GitHub Actions создаёт архив вида:
 
 ```text
 corne-dongle-firmware_YYYYMMDD_HHMM.zip

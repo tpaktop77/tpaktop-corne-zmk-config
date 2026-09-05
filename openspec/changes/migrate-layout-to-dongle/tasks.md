@@ -30,8 +30,8 @@
 - [x] 5.3 Record run/job identifiers and automated results in the test matrix, repeat static/OpenSpec validation, and check off every completed task.
 - [x] 5.4 Open pull request #1 against `master` with a summary, OpenSpec links, source commit, build evidence, provisioning warning, and a list of hardware tests left `manual pending`.
 - [x] 5.5 Push the 6-column fix to PR #1, wait for all targets to build successfully, inspect the new timestamped artifact, and leave the repeated hardware layout/combo test as `manual pending`.
-- [ ] 5.6 Translate all tracked prose, documentation, OpenSpec artifacts, and source comments to English without changing firmware behavior; verify a repository-wide Cyrillic-range search returns no matches, then repeat strict OpenSpec validation and the four-target CI build.
+- [x] 5.6 Translate all tracked prose, documentation, OpenSpec artifacts, and source comments to English without changing firmware behavior; verify a repository-wide Cyrillic-range search returns no matches, then repeat strict OpenSpec validation and the four-target CI build.
 - [x] 5.7 Reconcile the design and delta specs with the approved ZMK v0.3 review fixes for overlapping combos, concurrent combo capacity, Studio behavior metadata, and position-keyed OS-action state.
 - [x] 5.8 Set the five overlapping four-key combos to 80 ms and configure eight concurrently pressed combos on the dongle; verify shorter and unrelated combo timeouts remain 50 ms.
 - [x] 5.9 Add Studio parameter metadata to `&os_set` and `&os_action`, and track active OS-action keycodes independently by event position; verify duplicate actions cannot interfere with one another and release uses the press-time keycode.
-- [ ] 5.10 Run static checks, strict OpenSpec validation, and all four GitHub Actions targets; inspect the timestamped artifact and leave hardware timing/Studio/concurrency checks as manual pending.
+- [x] 5.10 Run static checks, strict OpenSpec validation, and all four GitHub Actions targets; inspect the timestamped artifact and leave hardware timing/Studio/concurrency checks as manual pending.

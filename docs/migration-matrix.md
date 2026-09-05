@@ -13,7 +13,7 @@ The target `tpaktop-corne-zmk-config` repository preserves all keymap bindings. 
 | view repo `e7d7c10` | Studio snippet on left | dongle build | Studio USB RPC on central | implemented; CI pass | dongle Studio build pass; connection manual |
 | view repo nice!view custom widget | layer/profile/art UI | peripheral built-in status | local battery/charging and split link; dedicated display queue | implemented; CI pass | both nice!view builds pass; displays manual |
 | view repo workflow | two UF2 files in `firmware.zip` | four-target workflow | dongle/left/right/reset plus timestamped archive | implemented; CI pass | artifact `corne-dongle-firmware_20260905_0057`, four UF2 files audited |
-| view repo keymap/module | complete working baseline | shared central keymap/module | bindings preserved; five long combo timeouts and custom behavior internals hardened; comments translated | implemented; automated validation pending | structural audit plus regression matrix |
+| view repo keymap/module | complete working baseline | shared central keymap/module | bindings preserved; five long combo timeouts and custom behavior internals hardened; comments translated | implemented; CI pass | run 33960259358 plus structural audit and regression matrix |
 
 ## Layers and shared behaviors
 

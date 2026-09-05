@@ -20,7 +20,7 @@ The official ZMK v0.3 dongle mechanism requires a central shield with mock kscan
 - Proprietary 2.4 GHz transport, operation without the dongle, or runtime topology switching.
 - A dongle screen, forwarding active layer/OS/host profile to the halves, or a custom display widget.
 - Peripheral battery fetching or proxy on the central.
-- Fixing overlapping combos, Russian Caps Word, or otherwise changing the current layout.
+- Russian Caps Word or otherwise redesigning the current layout positions.
 - Modifying the source view repository, `nat-corne-zmk-config`, or QMK/Oryx.
 
 ## Decisions
@@ -86,6 +86,16 @@ All tracked prose, documentation, OpenSpec artifacts, and source comments use En
 
 This repository-wide policy is preferred over leaving bilingual fragments because it makes review and future maintenance consistent. It is enforced with a full-tree Cyrillic-range search before merge.
 
+### 11. Harden overlapping combos and Studio-editable OS behaviors
+
+A source review against ZMK v0.3 found four implementation details that require hardening before merge. The five four-key combos that overlap shorter subsets use an 80 ms timeout while their shorter subsets retain 50 ms. ZMK keeps the longer candidate alive after the shorter candidate's timeout, allowing the fourth key to arrive without changing the established timing for unrelated combos.
+
+The dongle central sets `CONFIG_ZMK_COMBO_MAX_PRESSED_COMBOS=8` so a fifth concurrently held combo does not overflow the default four-entry active-combo array and re-emit its positions as ordinary keys.
+
+Both custom OS behaviors expose explicit parameter metadata to ZMK Studio. `&os_set` enumerates the three profiles and `&os_action` enumerates all supported actions, allowing Studio to validate and store those bindings instead of returning `INVALID_PARAMETERS`.
+
+Active `&os_action` keycodes are tracked by invocation position rather than action number. This allows duplicate assignments of the same action to be pressed independently. The exact keycode selected on press remains stored until release; recalculating it on release was rejected because an intervening OS-profile change could release a different modifier chord and leave the original chord stuck.
+
 ## Risks / Trade-offs
 
 - [The actual dongle board differs from `nice_nano_v2`] -> The board is isolated to one matrix entry and documented as the accepted hardware assumption; changing it does not affect keymap or topology specs.
@@ -97,6 +107,8 @@ This repository-wide policy is preferred over leaving bilingual fragments becaus
 - [The dongle is lost or fails] -> The halves intentionally do not work independently; the unchanged view repository and documented reset procedure provide rollback.
 - [Rare concurrent runs share a minute-level timestamp] -> GitHub separates artifacts by run and the readable timestamp satisfies everyday identification; a run ID is not added to the name.
 - [Literal Russian examples become less immediately readable] -> Stable Russian-PC aliases and Latin key names preserve exact mappings without violating the English-only text policy.
+- [An 80 ms four-key combo window increases accidental activation risk] -> Only the five overlapping four-key combos receive the longer timeout; shorter and unrelated combos remain at 50 ms and hardware validation covers normal fast typing.
+- [Duplicate Studio assignments invoke the same OS action concurrently] -> Press state is keyed by the behavior event position and retains the exact encoded keycode through release.
 
 ## Migration Plan
 

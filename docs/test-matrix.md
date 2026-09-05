@@ -177,6 +177,13 @@ Pay particular attention to Right Shift, GUI, and Alt: underlying Graphite posit
 | short chord only | any pair | USB/BLE | the short combo resolves after overlap handling | manual pending |
 | normal fast text | Graphite/QWERTY | USB/BLE | no false combos | manual pending |
 | normal fast text | Russian | USB/BLE | no false combos | manual pending |
+| delayed fourth key | each four-key overlap | USB/BLE | a fourth key arriving 51-79 ms after the first invokes only the four-key combo | manual pending |
+
+Concurrent active-combo capacity:
+
+| Check | Transport | Expected result | Status |
+|---|---|---|---|
+| four held modifier combos, then Smiles combo | USB/BLE | Smiles activates as the fifth concurrent combo; source positions do not emit letters | manual pending |
 
 ## System/Bluetooth
 
@@ -245,6 +252,8 @@ Additional state tests:
 | ZMK Studio USB | connects through the dongle central snippet | manual pending |
 | Studio reserved layers | three reserved entries are available | manual pending |
 | Studio Russian layers | display names Russian, Russian Symbols, and Russian Smiles are visible; three reserved entries remain | manual pending |
+| Studio custom OS metadata | `Set OS Profile` offers Windows/macOS/Linux and `OS Action` offers all 13 named actions; valid assignments are accepted | manual pending |
+| duplicate OS action positions | assign the same OS action to two positions and overlap their presses/releases; both invocations remain independent with no stuck modifier | manual pending |
 | Studio source of truth | reboot restores version-controlled behaviors and combos | manual pending |
 
 ## Provisioning, endpoints, and packaging

@@ -1,6 +1,6 @@
 # Corne layout
 
-The layout was migrated without functional changes from read-only `tpaktop-corne-wireless-view-zmk-config@e7d7c10`. The dongle change affects only split topology, nice!view contents, the Studio endpoint, and firmware packaging. `.` represents `&none`, and `▽` represents `&trans`. `AS(X)` means Auto Shift: tap sends `X`; holding longer than 300 ms sends `Shift+X`.
+The layout was migrated from read-only `tpaktop-corne-wireless-view-zmk-config@e7d7c10`. Intentional review-driven differences are limited to an 80 ms timeout for five overlapping four-key combos, increased concurrent-combo capacity, and Studio-safe custom OS behaviors. The dongle migration also changes split topology, nice!view contents, the Studio endpoint, and firmware packaging. `.` represents `&none`, and `▽` represents `&trans`. `AS(X)` means Auto Shift: tap sends `X`; holding longer than 300 ms sends `Shift+X`.
 
 ## Device architecture
 

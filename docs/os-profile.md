@@ -28,7 +28,9 @@ Named values are exported by a repository-local devicetree binding header.
 
 `&os_set` changes the profile on press and generates no HID event. On press, `&os_action` selects a HID keycode from the centralized table and delegates the press to standard ZMK `&kp`; on release, it delegates release of the same keycode.
 
-The selected keycode is retained until release. Even an artificial OS-profile change between press and release therefore cannot release a different modifier and leave the original modifier stuck.
+The selected keycode is retained by invocation position until release. Duplicate assignments of the same action therefore remain independent, and even an artificial OS-profile change between press and release cannot release a different modifier or leave the original modifier stuck.
+
+Both behaviors publish parameter metadata to ZMK Studio: `&os_set` exposes the three named profiles and `&os_action` exposes all 13 named actions. Studio can therefore validate and assign them without treating their required parameter as invalid.
 
 ## Action table
 

@@ -2,7 +2,7 @@
 
 Primary QMK reference: `tpaktop77/oryx-with-custom-qmk`, remote `main@5d674ed4d866b66e34389262092cc5347da90bc7`. The direct read-only source for this dongle migration is `tpaktop-corne-wireless-view-zmk-config@e7d7c10`. It already contains Graphite/QWERTY/Russian, corrected thumb-overlay priority, 300 ms Auto Shift, positional combos, and the OS-profile module.
 
-The target `tpaktop-corne-zmk-config` repository preserves all keymap bindings and timings. Intentional differences are limited to dongle topology, peripheral display mode, Studio RPC placement, build matrix, settings reset, firmware artifact naming, the 6-column safeguard, and English-only documentation/comments. Source repositories remain unchanged. Hardware validation of the new topology remains with the owner according to `docs/test-matrix.md`.
+The target `tpaktop-corne-zmk-config` repository preserves all keymap bindings. Intentional differences are limited to dongle topology, peripheral display mode, Studio RPC placement, build matrix, settings reset, firmware artifact naming, the 6-column safeguard, English-only documentation/comments, and review-driven combo/custom-behavior hardening. Five overlapping four-key combos use 80 ms instead of 50 ms; other combo timings remain unchanged. Source repositories remain unchanged. Hardware validation of the new topology remains with the owner according to `docs/test-matrix.md`.
 
 ## Dongle migration layer
 
@@ -13,7 +13,7 @@ The target `tpaktop-corne-zmk-config` repository preserves all keymap bindings a
 | view repo `e7d7c10` | Studio snippet on left | dongle build | Studio USB RPC on central | implemented; CI pass | dongle Studio build pass; connection manual |
 | view repo nice!view custom widget | layer/profile/art UI | peripheral built-in status | local battery/charging and split link; dedicated display queue | implemented; CI pass | both nice!view builds pass; displays manual |
 | view repo workflow | two UF2 files in `firmware.zip` | four-target workflow | dongle/left/right/reset plus timestamped archive | implemented; CI pass | artifact `corne-dongle-firmware_20260905_0057`, four UF2 files audited |
-| view repo keymap/module | complete working baseline | shared central keymap/module | bindings and timings unchanged; comments translated | implemented; functional parity pass | structural checksum/audit plus regression matrix |
+| view repo keymap/module | complete working baseline | shared central keymap/module | bindings preserved; five long combo timeouts and custom behavior internals hardened; comments translated | implemented; automated validation pending | structural audit plus regression matrix |
 
 ## Layers and shared behaviors
 
@@ -196,7 +196,7 @@ Source chords are shown using Oryx Graphite letters plus Russian-PC aliases, but
 | Alternative input | Unicode Russian | excluded | use the tested host Russian-PC model |
 | QWERTY language cycling | return to the previous English layout | excluded | leaving Russian always goes directly to Graphite |
 | ZMK custom behavior | complete Russian Caps Word | deferred | next OpenSpec `implement-russian-caps-word`; current stage uses only `continue-list` |
-| Combo tuning | overlap timeout or policy changes | deferred | separate branch/change after new switches arrive |
+| Combo tuning beyond the five reviewed overlaps | further timeout or position changes | deferred | tune only after physical testing with the intended switches |
 | QMK layer 2 | old TB/numeric macro layer | excluded | explicitly omitted; do not create it |
 | `ST_MACRO_0-10` | numeric text macros | excluded | belong to old layer 2 |
 | QMK layer 11 | Mouse/Navigator | excluded | mouse, trackpad, and automouse are forbidden |

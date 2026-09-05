@@ -401,7 +401,7 @@
 
                 // Oryx 4+5+6+Dot: type slash on the Numbers layer.
                 numbers_slash_combo {
-                        timeout-ms = <50>;
+                        timeout-ms = <80>;
                         key-positions = <19 20 21 22>;
                         bindings = <&kp FSLH>;
                         layers = <NUMBERS>;
@@ -409,7 +409,7 @@
 
                 // Oryx 1+2+3+Equal: type asterisk on the Numbers layer.
                 numbers_asterisk_combo {
-                        timeout-ms = <50>;
+                        timeout-ms = <80>;
                         key-positions = <31 32 33 34>;
                         bindings = <&kp ASTRK>;
                         layers = <NUMBERS>;
@@ -531,7 +531,7 @@
 
                 // Oryx R+L+T+D: OS-aware Cut.
                 cut_combo {
-                        timeout-ms = <50>;
+                        timeout-ms = <80>;
                         key-positions = <2 3 14 15>;
                         bindings = <&os_action OS_ACTION_CUT>;
                         layers = <GRAPHITE QWERTY RUSSIAN>;
@@ -595,7 +595,7 @@
 
                 // Oryx H+A+E+I: OS-aware application switcher.
                 app_switch_combo {
-                        timeout-ms = <50>;
+                        timeout-ms = <80>;
                         key-positions = <19 20 21 22>;
                         bindings = <&os_action OS_ACTION_APP_SWITCH>;
                         layers = <GRAPHITE QWERTY RUSSIAN>;
@@ -603,7 +603,7 @@
 
                 // Oryx N+R+T+S: OS-aware task view.
                 task_view_combo {
-                        timeout-ms = <50>;
+                        timeout-ms = <80>;
                         key-positions = <13 14 15 16>;
                         bindings = <&os_action OS_ACTION_TASK_VIEW>;
                         layers = <GRAPHITE QWERTY RUSSIAN>;

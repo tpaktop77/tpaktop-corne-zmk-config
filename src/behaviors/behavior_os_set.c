@@ -6,6 +6,7 @@
 #define DT_DRV_COMPAT tpak_behavior_os_set
 
 #include <zephyr/device.h>
+#include <zephyr/sys/util.h>
 
 #include <drivers/behavior.h>
 #include <zmk/behavior.h>
@@ -27,10 +28,36 @@ static int on_os_set_released(struct zmk_behavior_binding *binding,
         return ZMK_BEHAVIOR_OPAQUE;
 }
 
+#if IS_ENABLED(CONFIG_ZMK_BEHAVIOR_METADATA)
+
+static const struct behavior_parameter_value_metadata os_set_param1_values[] = {
+        {.display_name = "Windows", .type = BEHAVIOR_PARAMETER_VALUE_TYPE_VALUE,
+         .value = OS_WINDOWS},
+        {.display_name = "macOS", .type = BEHAVIOR_PARAMETER_VALUE_TYPE_VALUE,
+         .value = OS_MACOS},
+        {.display_name = "Linux", .type = BEHAVIOR_PARAMETER_VALUE_TYPE_VALUE,
+         .value = OS_LINUX},
+};
+
+static const struct behavior_parameter_metadata_set os_set_param_metadata_sets[] = {{
+        .param1_values = os_set_param1_values,
+        .param1_values_len = ARRAY_SIZE(os_set_param1_values),
+}};
+
+static const struct behavior_parameter_metadata os_set_param_metadata = {
+        .sets_len = ARRAY_SIZE(os_set_param_metadata_sets),
+        .sets = os_set_param_metadata_sets,
+};
+
+#endif /* CONFIG_ZMK_BEHAVIOR_METADATA */
+
 static const struct behavior_driver_api behavior_os_set_driver_api = {
         .binding_pressed = on_os_set_pressed,
         .binding_released = on_os_set_released,
         .locality = BEHAVIOR_LOCALITY_CENTRAL,
+#if IS_ENABLED(CONFIG_ZMK_BEHAVIOR_METADATA)
+        .parameter_metadata = &os_set_param_metadata,
+#endif /* CONFIG_ZMK_BEHAVIOR_METADATA */
 };
 
 #define OS_SET_INST(n)                                                                             \

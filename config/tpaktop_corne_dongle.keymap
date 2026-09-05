@@ -1,0 +1,2 @@
+/* Reuse the single version-controlled Corne keymap on the headless central. */
+#include "corne.keymap"

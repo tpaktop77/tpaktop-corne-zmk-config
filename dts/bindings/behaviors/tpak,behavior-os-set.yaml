@@ -1,0 +1,5 @@
+description: Selects the volatile host OS profile
+
+compatible: "tpak,behavior-os-set"
+
+include: one_param.yaml

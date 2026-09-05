@@ -1,0 +1,9 @@
+# Copyright (c) 2026 tpak
+# SPDX-License-Identifier: MIT
+
+config TPAK_OS_PROFILE
+    bool
+    default y
+    depends on DT_HAS_TPAK_BEHAVIOR_OS_SET_ENABLED || DT_HAS_TPAK_BEHAVIOR_OS_ACTION_ENABLED
+    help
+      Enable the volatile host OS profile and OS-aware actions.

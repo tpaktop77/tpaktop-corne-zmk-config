@@ -1,0 +1,9 @@
+/*
+ * Copyright (c) 2026 tpak
+ * SPDX-License-Identifier: MIT
+ */
+
+/* The hardware is Corne 3x6; never let a peripheral select the 5-column map. */
+&foostan_corne_5col_layout {
+    status = "disabled";
+};

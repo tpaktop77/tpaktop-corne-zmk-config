@@ -1,0 +1,8 @@
+# Copyright (c) 2026 tpak
+# SPDX-License-Identifier: MIT
+
+config SHIELD_TPAKTOP_CORNE_DONGLE
+    def_bool $(shields_list_contains,tpaktop_corne_dongle)
+
+config SHIELD_TPAKTOP_CORNE_6COL
+    def_bool $(shields_list_contains,tpaktop_corne_6col)

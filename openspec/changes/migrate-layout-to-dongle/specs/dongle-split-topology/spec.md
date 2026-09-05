@@ -36,3 +36,18 @@ ZMK v0.3 central MUST NOT включать battery-level fetching или battery
 #### Scenario: Аудит central-конфигурации
 - **WHEN** проверяется итоговый Kconfig донгла
 - **THEN** fetching и proxy заряда split peripherals отключены
+
+### Requirement: Обе половины используют только Corne 6-column layout
+Peripheral firmware SHALL отключать альтернативный `foostan_corne_5col_layout` и SHALL преобразовывать матричные события через 42-позиционный Corne `default_transform`; правая половина SHALL сохранять `col-offset = 6`.
+
+#### Scenario: Правый home row
+- **WHEN** пользователь нажимает пять буквенных клавиш правого home row от центра к краю на Graphite
+- **THEN** central получает позиции 18–22 и выводит `YHAEI`, а не 5-column позиции 15–19 (`TSGYH`)
+
+#### Scenario: Positional combo после фикса
+- **WHEN** пользователь нажимает физические позиции 19+20+21 на правом home row
+- **THEN** central распознаёт Enter combo по исходным 42-позиционным номерам
+
+#### Scenario: Установка исправления
+- **WHEN** обе половины уже связаны с тем же dongle central
+- **THEN** пользователь может установить исправление перепрошивкой left/right peripheral UF2 без settings reset и без перепрошивки донгла

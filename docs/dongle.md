@@ -69,6 +69,10 @@ Timestamp задаётся в UTC. Внутри находятся стабил�
 
 Battery-level fetching/proxy на central намеренно выключены: донгл не собирает заряд половин, а каждый nice!view читает локальную батарею.
 
+## Обновление исправления 6-column mapping
+
+Обе peripheral firmware жёстко отключают альтернативный in-tree layout `5 Column`; рабочим остаётся только полный Corne `6 Column`. Если dongle topology уже установлена и обе половины подключаются, для обновления достаточно прошить новые `corne-left-peripheral.uf2` и `corne-right-peripheral.uf2`, затем перезапустить половины. Повторный settings reset и перепрошивка донгла для этого обновления не требуются.
+
 ## Rollback к конфигурации без донгла
 
 Стабильный `tpaktop-corne-wireless-view-zmk-config` не изменяется этой миграцией.

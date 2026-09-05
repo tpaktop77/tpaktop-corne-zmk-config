@@ -232,6 +232,8 @@ PR #5 собирался успешно, но аппаратно `RUSSIAN = 9` �
 | dongle central cold boot | после запуска принимает обе ранее сопряжённые peripherals | manual pending |
 | левая peripheral half | все позиции передаются dongle central, нет reset/disconnect | manual pending |
 | правая peripheral half | все позиции передаются тому же central, нет reset/disconnect | manual pending |
+| initial peripheral mapping, 2026-09-05 | после полного settings reset right home row ожидался `YHAEI`, получен `TSGYH`; left показал то же смещение | fail: обе половины использовали 5-column mapping |
+| fixed 6-column mapping | left home row = `none NRTSG`, right home row = `YHAEI`; внешние колонки и thumbs не смещены | manual pending после прошивки новых left/right UF2 |
 | cross-half combo | chord из позиций обеих рук распознаётся central один раз | manual pending |
 | работа без донгла | половины не отправляют keyboard HID напрямую хосту | manual pending |
 | reconnect left | после выключения/включения left сама возвращается к central | manual pending |

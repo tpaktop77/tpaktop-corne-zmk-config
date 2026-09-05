@@ -9,6 +9,7 @@
 - [x] 2.2 Подключить общий `corne.keymap` и central-only config к dongle target; проверить, что Studio и пользовательские OS behaviors принадлежат central.
 - [x] 2.3 Настроить `corne_left` и `corne_right` как BLE peripherals с nice!view built-in status screen и явным dedicated display work queue; проверить battery percentage/charging/connection, отсутствие custom art widget и системной display queue.
 - [x] 2.4 Явно оставить battery fetching/proxy выключенными на central и проверить итоговые config sources поиском соответствующих Kconfig symbols.
+- [ ] 2.5 По аппаратному evidence отключить альтернативный Corne 5-column physical layout для обеих peripherals и проверить compiled Devicetree: единственный enabled 6-column layout, left без offset, right с `col-offset = 6`.
 
 ## 3. Сборка и упаковка firmware
 
@@ -28,3 +29,4 @@
 - [x] 5.2 Закоммитить и отправить рабочую ветку, дождаться успешной GitHub Actions сборки всех четырёх targets и проверить содержимое датированного artifact.
 - [x] 5.3 Зафиксировать номера run/jobs и автоматические результаты в test matrix, повторить статические/OpenSpec проверки и отметить все реально завершённые tasks.
 - [x] 5.4 Создать pull request в `master` с summary, ссылками на OpenSpec artifacts, source commit, build evidence, provisioning warning и списком аппаратных `manual pending` тестов: PR #1.
+- [ ] 5.5 Отправить 6-column fix в PR #1, дождаться успешной сборки всех targets, проверить новый датированный artifact и оставить повторный аппаратный тест layout/combo как `manual pending`.

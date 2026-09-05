@@ -6,12 +6,12 @@ include:
     artifact-name: tpaktop-corne-dongle
 
   - board: nice_nano_v2
-    shield: corne_left nice_view_adapter nice_view
+    shield: corne_left tpaktop_corne_6col nice_view_adapter nice_view
     cmake-args: -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n
     artifact-name: corne-left-peripheral
 
   - board: nice_nano_v2
-    shield: corne_right nice_view_adapter nice_view
+    shield: corne_right tpaktop_corne_6col nice_view_adapter nice_view
     cmake-args: -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n
     artifact-name: corne-right-peripheral
 

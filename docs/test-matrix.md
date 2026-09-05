@@ -27,8 +27,8 @@
 | Конфигурация | Ожидаемый результат | Статус | Evidence |
 |---|---|---|---|
 | `nice_nano_v2 + tpaktop_corne_dongle + studio-rpc-usb-uart` | успешная central UF2 сборка | pass | [job 101170224503](https://github.com/tpaktop77/tpaktop-corne-zmk-config/actions/runs/33918196591/job/101170224503) |
-| `nice_nano_v2 + corne_left + nice_view_adapter + nice_view`, peripheral role | успешная left UF2 сборка | pass | [job 101170224600](https://github.com/tpaktop77/tpaktop-corne-zmk-config/actions/runs/33918196591/job/101170224600) |
-| `nice_nano_v2 + corne_right + nice_view_adapter + nice_view`, peripheral role | успешная right UF2 сборка | pass | [job 101170224549](https://github.com/tpaktop77/tpaktop-corne-zmk-config/actions/runs/33918196591/job/101170224549) |
+| `nice_nano_v2 + corne_left + tpaktop_corne_6col + nice_view_adapter + nice_view`, peripheral role | успешная left UF2 сборка | retest pending | extension shield CI |
+| `nice_nano_v2 + corne_right + tpaktop_corne_6col + nice_view_adapter + nice_view`, peripheral role | успешная right UF2 сборка | retest pending | extension shield CI |
 | `nice_nano_v2 + settings_reset` | успешная reset UF2 сборка | pass | [job 101170226136](https://github.com/tpaktop77/tpaktop-corne-zmk-config/actions/runs/33918196591/job/101170226136) |
 | merged artifact | четыре однозначно названных UF2 в `corne-dongle-firmware_YYYYMMDD_HHMM.zip` | pass | [run 33918196591](https://github.com/tpaktop77/tpaktop-corne-zmk-config/actions/runs/33918196591), artifact `corne-dongle-firmware_20260904_2050`, SHA-256 `a5bcc39b0845b2e3e6256d63592c4e155e9beb343cb0dac7db98b9905e535b83` |
 

@@ -78,7 +78,7 @@ Matrix содержит:
 
 Аппаратный тест 2026-09-05 после полного settings reset выявил систематическое использование `five_column_transform` обеими половинами: правый home row выдал `TSGYH` вместо `YHAEI`, то есть позиции 15–19 вместо 18–22; левая половина показала соответствующее смещение и попадание внешней клавиши в служебную позицию. Исходный `master` целевого репозитория содержит 42 bindings на слой, поэтому это не 5×3 template. Повторный reset с полной загрузкой reset firmware результат не изменил.
 
-В `config/corne.overlay`, применяемом ZMK v0.3 к обоим shields `corne_left` и `corne_right`, `foostan_corne_5col_layout` переводится в `status = "disabled"`. Единственным доступным peripheral physical layout остаётся `foostan_corne_6col_layout` с прежними `default_transform` и правым `col-offset = 6`. Dongle overlay и version-controlled keymap не меняются. Роли и BLE bonds также не меняются, поэтому для установки исправления достаточно перепрошить обе половины без settings reset.
+Дополнительный shield `tpaktop_corne_6col`, включаемый после `corne_left`/`corne_right`, переводит `foostan_corne_5col_layout` в `status = "disabled"`. Обычный user-config overlay был отклонён фактической CI-проверкой: ZMK подключает его раньше in-tree Corne overlay, когда label ещё не определён. Extension shield обеспечивает правильный порядок, а единственным доступным peripheral physical layout остаётся `foostan_corne_6col_layout` с прежними `default_transform` и правым `col-offset = 6`. Dongle overlay и version-controlled keymap не меняются. Роли и BLE bonds также не меняются, поэтому для установки исправления достаточно перепрошить обе половины без settings reset.
 
 ## Risks / Trade-offs
 
@@ -86,7 +86,7 @@ Matrix содержит:
 - [Старые bonds мешают обнаружению двух peripherals] → обязательный `settings_reset` включён в artifact и выполняется на всех трёх устройствах.
 - [Одна из половин не подключается при старте] → battery fetching/proxy отключены, display queue явно выделена; test matrix отдельно проверяет cold boot, reconnection и обе стороны.
 - [Positional combo меняются при переносе] → dongle transform дословно совпадает с Corne 6-column v0.3, keymap копируется из фиксированного commit, добавляется структурная проверка 42 bindings на слой.
-- [Peripheral выбирает альтернативный in-tree Corne 5-column layout] → 5-column physical layout явно отключён общим `config/corne.overlay`; compiled Devicetree обеих половин проверяется на единственный enabled 6-column layout.
+- [Peripheral выбирает альтернативный in-tree Corne 5-column layout] → 5-column physical layout явно отключён extension shield `tpaktop_corne_6col`; compiled Devicetree обеих половин проверяется на единственный enabled 6-column layout.
 - [Peripheral display неожиданно показывает art/layer] → сборочная конфигурация принудительно выбирает built-in screen; итоговый Kconfig проверяется в Actions.
 - [Донгл потерян или неисправен] → половины намеренно не работают автономно; неизменённый view-репозиторий и документированный reset дают rollback.
 - [Timestamp совпадает у редких параллельных запусков в одну минуту] → GitHub хранит artifacts по run, а имя удовлетворяет задаче различения повседневных сборок; run ID не добавляется ради читаемости.

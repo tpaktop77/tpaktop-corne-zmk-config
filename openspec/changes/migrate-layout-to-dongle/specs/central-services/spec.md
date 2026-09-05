@@ -1,34 +1,34 @@
 ## Purpose
 
-Закрепляет все зависящие от keymap и хоста службы за донглом, чтобы периферийные половины оставались простыми источниками физических позиций.
+Assigns all keymap-dependent and host-facing services to the dongle so the peripheral halves remain simple sources of physical position events.
 
 ## ADDED Requirements
 
-### Requirement: Keymap и пользовательские behaviors выполняются на central
-Донгл SHALL владеть keymap processing, positional combo, macros, Auto Shift, Bluetooth behaviors и пользовательскими `&os_set`/`&os_action`; peripherals SHALL передавать физические события central.
+### Requirement: The central executes the keymap and custom behaviors
+The dongle SHALL own keymap processing, positional combos, macros, Auto Shift, Bluetooth behaviors, and custom `&os_set`/`&os_action` behaviors; peripherals SHALL forward physical events to the central.
 
-#### Scenario: Combo между половинами
-- **WHEN** chord содержит позиции с левой и правой половины
-- **THEN** central распознаёт positional combo по общему 42-key transform
+#### Scenario: Cross-half combo
+- **WHEN** a chord contains positions from the left and right halves
+- **THEN** the central recognizes the positional combo using the shared 42-key transform
 
 #### Scenario: OS-aware action
-- **WHEN** combo вызывает `&os_action`
-- **THEN** HID press/release формируется донглом согласно текущему volatile OS profile без stuck modifiers
+- **WHEN** a combo invokes `&os_action`
+- **THEN** the dongle generates HID press/release events for the current volatile OS profile without stuck modifiers
 
-### Requirement: ZMK Studio доступна через донгл
-ZMK Studio SHALL быть включена на central и доступна через USB RPC донгла; Studio snippet MUST NOT назначаться левой или правой peripheral firmware.
+### Requirement: ZMK Studio is available through the dongle
+ZMK Studio SHALL be enabled on the central and available through the dongle's USB RPC; the Studio snippet MUST NOT be assigned to left or right peripheral firmware.
 
-#### Scenario: Подключение Studio
-- **WHEN** донгл подключён к компьютеру по USB и открыт ZMK Studio
-- **THEN** Studio видит полный Corne physical layout и все version-controlled layers, включая три reserved layer
+#### Scenario: Connect Studio
+- **WHEN** the dongle is connected to the computer over USB and ZMK Studio is opened
+- **THEN** Studio sees the complete Corne physical layout and all version-controlled layers, including three reserved layers
 
-### Requirement: OS profile остаётся независимым и volatile
-Смена topology MUST NOT менять модель OS profile: Windows SHALL быть default после reboot, профиль MUST NOT храниться во flash и MUST NOT связываться с host Bluetooth profile.
+### Requirement: The OS profile remains independent and volatile
+Changing topology MUST NOT alter the OS-profile model: Windows SHALL be the default after reboot, the profile MUST NOT be stored in flash, and it MUST NOT be linked to a host Bluetooth profile.
 
-#### Scenario: Перезапуск после выбора macOS
-- **WHEN** пользователь выбирает macOS и перезапускает донгл
-- **THEN** OS profile возвращается в Windows, а активный keymap base возвращается в Graphite
+#### Scenario: Reboot after selecting macOS
+- **WHEN** the user selects macOS and reboots the dongle
+- **THEN** the OS profile returns to Windows and the active keymap base returns to Graphite
 
-#### Scenario: Смена BT profile
-- **WHEN** пользователь выбирает другой `BT0`–`BT4`
-- **THEN** текущее состояние OS profile не меняется
+#### Scenario: Change Bluetooth profile
+- **WHEN** the user selects a different `BT0`-`BT4` profile
+- **THEN** the current OS profile remains unchanged

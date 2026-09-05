@@ -35,7 +35,7 @@
 };
 
 // Keep Caps Word active across Russian-PC punctuation-backed letters.
-// ZMK only auto-shifts HID A-Z, so Х Ъ Ж Э Б Ю Ё remain lowercase until a custom behavior is added.
+// ZMK only auto-shifts HID A-Z, so RU_HA, RU_HARD, RU_ZHE, RU_E, RU_BE, RU_YU, and RU_YO remain lowercase until a custom behavior is added.
 &caps_word {
         continue-list = <UNDERSCORE BACKSPACE DELETE LBKT RBKT SEMI SQT COMMA DOT GRAVE>;
 };
@@ -337,7 +337,7 @@
                         layers = <GRAPHITE>;
                 };
 
-                // Russian Г+Ш+Щ: select English on the host and return to Graphite.
+                // Russian RU_GHE+RU_SHA+RU_SHCH: select English on the host and return to Graphite.
                 to_english_combo {
                         timeout-ms = <50>;
                         key-positions = <7 8 9>;
@@ -424,7 +424,7 @@
                         slow-release;
                 };
 
-                // Oryx Russian П+Е: hold the Russian Smiles layer.
+                // Oryx Russian RU_PE+RU_IE: hold the Russian Smiles layer.
                 russian_smiles_layer_combo {
                         timeout-ms = <50>;
                         key-positions = <5 17>;
@@ -653,9 +653,9 @@
 
                 russian_layer {
 // -------------------------------------------------------------------------------------------------
-// |  ESC* |  Й  |  Ц  |  У  |  К  |  Е  |   |  Н  |  Г  |  Ш  |  Щ  |  З  |  Х  |
-// |       |  Ф  |  Ы  |  В  |  А  |  П  |   |  Р  |  О  |  Л  |  Д  |  Ж  |  Э  |
-// |  ENG  |  Я  |  Ч  |  С  |  М  |  И  |   |  Т  |  Ь  |  Б  |  Ю  |  Ё  |  Ъ  |
+// | ESC* | RU_SHTI | RU_TSE | RU_U | RU_KA | RU_IE | | RU_EN | RU_GHE | RU_SHA | RU_SHCH | RU_ZE | RU_HA |
+// |      | RU_EF   | RU_YERU| RU_VE| RU_A  | RU_PE | | RU_ER | RU_O   | RU_EL  | RU_DE   | RU_ZHE| RU_E  |
+// | ENG  | RU_YA   | RU_CHE | RU_ES| RU_EM | RU_I  | | RU_TE | RU_SOFT| RU_BE  | RU_YU   | RU_YO | RU_HARD|
 //               | SYSTEM | BSP/RU-SYM | DEL/NUM |   | TAB/FN | SPC/NAV |       |
 // * position 0 is transparent and inherits Escape from Graphite.
                         display-name = "Russian";

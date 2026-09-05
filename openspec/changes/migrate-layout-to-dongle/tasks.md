@@ -1,32 +1,33 @@
-## 1. Перенос проверенного baseline
+## 1. Migrate the tested baseline
 
-- [x] 1.1 Перенести keymap, west manifest и корневой out-of-tree OS-profile module из `tpaktop-corne-wireless-view-zmk-config@e7d7c10`; проверить точное совпадение переносимых исходников через `sha256sum`/`diff`.
-- [x] 1.2 Перенести пользовательскую документацию раскладки и тестов, добавить provenance целевого репозитория и проверить отсутствие ссылок, ошибочно объявляющих старую central-left topology актуальной.
+- [x] 1.1 Migrate the keymap, west manifest, and root out-of-tree OS-profile module from `tpaktop-corne-wireless-view-zmk-config@e7d7c10`; verify exact source parity with `sha256sum` and `diff`.
+- [x] 1.2 Migrate user-facing layout and test documentation, add target repository provenance, and verify that no text incorrectly describes the old central-left topology as current.
 
-## 2. Dongle topology и конфигурация устройств
+## 2. Dongle topology and device configuration
 
-- [x] 2.1 Добавить shield `tpaktop_corne_dongle` для `nice_nano_v2` с mock kscan, 42-key Corne transform, physical layout, двумя peripherals и лимитами 7/7; проверить структуру overlay и Kconfig по ZMK v0.3.
-- [x] 2.2 Подключить общий `corne.keymap` и central-only config к dongle target; проверить, что Studio и пользовательские OS behaviors принадлежат central.
-- [x] 2.3 Настроить `corne_left` и `corne_right` как BLE peripherals с nice!view built-in status screen и явным dedicated display work queue; проверить battery percentage/charging/connection, отсутствие custom art widget и системной display queue.
-- [x] 2.4 Явно оставить battery fetching/proxy выключенными на central и проверить итоговые config sources поиском соответствующих Kconfig symbols.
-- [x] 2.5 По аппаратному evidence отключить альтернативный Corne 5-column physical layout для обеих peripherals и проверить compiled Devicetree: единственный enabled 6-column layout, left без offset, right с `col-offset = 6`.
+- [x] 2.1 Add a `tpaktop_corne_dongle` shield for `nice_nano_v2` with mock kscan, a 42-key Corne transform, physical layout, two peripherals, and 7/7 limits; verify the overlay and Kconfig structure against ZMK v0.3.
+- [x] 2.2 Connect the shared `corne.keymap` and central-only configuration to the dongle target; verify that Studio and custom OS behaviors belong to the central.
+- [x] 2.3 Configure `corne_left` and `corne_right` as BLE peripherals with the built-in nice!view status screen and an explicit dedicated display work queue; verify battery percentage/charging/connection, absence of custom artwork, and absence of the system display queue.
+- [x] 2.4 Explicitly keep battery fetching/proxy disabled on the central and inspect final configuration sources for the corresponding Kconfig symbols.
+- [x] 2.5 Disable the alternative Corne 5-column physical layout on both peripherals based on hardware evidence; verify compiled Devicetree has only the 6-column layout enabled, no offset on the left, and `col-offset = 6` on the right.
 
-## 3. Сборка и упаковка firmware
+## 3. Build and package firmware
 
-- [x] 3.1 Обновить `build.yaml` для dongle, left peripheral, right peripheral и settings reset с однозначными `artifact-name`; проверить YAML и CMake role arguments.
-- [x] 3.2 Перенести Studio RPC snippet с левой половины на dongle и проверить, что у peripheral entries snippet отсутствует.
-- [x] 3.3 Добавить metadata job с UTC timestamp `YYYYMMDD_HHMM` и передать датированное имя через официальный `archive_name` reusable workflow; проверить GitHub Actions YAML и ожидаемый шаблон имени.
+- [x] 3.1 Update `build.yaml` for dongle, left peripheral, right peripheral, and settings reset with unambiguous `artifact-name` values; validate YAML and CMake role arguments.
+- [x] 3.2 Move the Studio RPC snippet from the left half to the dongle and verify that peripheral entries have no Studio snippet.
+- [x] 3.3 Add a metadata job with a UTC `YYYYMMDD_HHMM` timestamp and pass the timestamped name through the official reusable workflow's `archive_name`; validate GitHub Actions YAML and the expected naming pattern.
 
-## 4. Эксплуатационная документация
+## 4. Operational documentation
 
-- [x] 4.1 Обновить layout/migration/os-profile docs для dongle central, сохранив описание всех перенесённых слоёв и поведения; проверить согласованность имён targets и topology.
-- [x] 4.2 Добавить руководство по settings reset, первой прошивке, host pairing и rollback с точным соответствием четырёх UF2; проверить последовательность по официальному ZMK v0.3 dongle guide.
-- [x] 4.3 Расширить test matrix проверками трёх устройств, cold boot/reconnect, обоих peripheral screens, cross-half combo, Studio на dongle, USB/BLE и датированного архива; аппаратные строки оставить `manual pending`.
+- [x] 4.1 Update layout, migration, and OS-profile documentation for the dongle central while preserving all migrated layers and behavior descriptions; verify target names and topology are consistent.
+- [x] 4.2 Add settings reset, first-flash, host pairing, and rollback instructions with exact mapping for all four UF2 files; verify the sequence against the official ZMK v0.3 dongle guide.
+- [x] 4.3 Extend the test matrix for three devices, cold boot/reconnect, both peripheral screens, cross-half combos, Studio on the dongle, USB/BLE, and the timestamped archive; leave hardware rows as `manual pending`.
 
-## 5. Верификация и доставка
+## 5. Verification and delivery
 
-- [x] 5.1 Выполнить `git diff --check`, структурные проверки 42 bindings/15 layers/positional combo, YAML parse и `openspec validate migrate-layout-to-dongle --strict`; устранить все ошибки.
-- [x] 5.2 Закоммитить и отправить рабочую ветку, дождаться успешной GitHub Actions сборки всех четырёх targets и проверить содержимое датированного artifact.
-- [x] 5.3 Зафиксировать номера run/jobs и автоматические результаты в test matrix, повторить статические/OpenSpec проверки и отметить все реально завершённые tasks.
-- [x] 5.4 Создать pull request в `master` с summary, ссылками на OpenSpec artifacts, source commit, build evidence, provisioning warning и списком аппаратных `manual pending` тестов: PR #1.
-- [x] 5.5 Отправить 6-column fix в PR #1, дождаться успешной сборки всех targets, проверить новый датированный artifact и оставить повторный аппаратный тест layout/combo как `manual pending`.
+- [x] 5.1 Run `git diff --check`, structural checks for 42 bindings/15 layers/positional combos, YAML parsing, and `openspec validate migrate-layout-to-dongle --strict`; resolve all errors.
+- [x] 5.2 Commit and push the working branch, wait for all four GitHub Actions targets to succeed, and inspect the timestamped artifact contents.
+- [x] 5.3 Record run/job identifiers and automated results in the test matrix, repeat static/OpenSpec validation, and check off every completed task.
+- [x] 5.4 Open pull request #1 against `master` with a summary, OpenSpec links, source commit, build evidence, provisioning warning, and a list of hardware tests left `manual pending`.
+- [x] 5.5 Push the 6-column fix to PR #1, wait for all targets to build successfully, inspect the new timestamped artifact, and leave the repeated hardware layout/combo test as `manual pending`.
+- [ ] 5.6 Translate all tracked prose, documentation, OpenSpec artifacts, and source comments to English without changing firmware behavior; verify a repository-wide Cyrillic-range search returns no matches, then repeat strict OpenSpec validation and the four-target CI build.

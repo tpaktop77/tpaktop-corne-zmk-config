@@ -1,30 +1,37 @@
 ## Purpose
 
-Сохраняет проверенную раскладку и пользовательские behaviors при переносе в отдельный репозиторий донгловой конфигурации с однозначной привязкой к исходной ревизии.
+Preserves the tested layout and custom behaviors while moving them to a separate dongle configuration repository with unambiguous source-revision provenance.
 
 ## ADDED Requirements
 
-### Requirement: Проверенная раскладка переносится из зафиксированной ревизии
-Целевая конфигурация SHALL воспроизводить version-controlled keymap и пользовательский ZMK-модуль из `tpaktop-corne-wireless-view-zmk-config` commit `e7d7c10` без функционального упрощения.
+### Requirement: The tested layout is migrated from a pinned revision
+The target configuration SHALL reproduce the version-controlled keymap and custom ZMK module from `tpaktop-corne-wireless-view-zmk-config` commit `e7d7c10` without functional simplification.
 
-#### Scenario: Состав раскладки после переноса
-- **WHEN** сравниваются исходная ревизия и донгловая конфигурация
-- **THEN** Graphite, QWERTY, Russian, функциональные слои, русские слои, positional combo, Auto Shift, macros и OS-aware actions присутствуют с теми же bindings и таймингами
+#### Scenario: Layout contents after migration
+- **WHEN** the source revision and dongle configuration are compared
+- **THEN** Graphite, QWERTY, Russian, functional layers, Russian auxiliary layers, positional combos, Auto Shift, macros, and OS-aware actions are present with the same bindings and timings
 
-#### Scenario: Начальное состояние
-- **WHEN** донгл перезагружается
-- **THEN** базовым слоем является Graphite с индексом 0, а volatile OS profile равен Windows
+#### Scenario: Initial state
+- **WHEN** the dongle reboots
+- **THEN** Graphite is base layer 0 and the volatile OS profile is Windows
 
-### Requirement: Перенос не изменяет исходные репозитории
-Работа SHALL изменять только `tpaktop-corne-zmk-config`; view-конфигурация, конфигурация `nat` и QMK/Oryx reference MUST оставаться read-only.
+### Requirement: Migration does not modify source repositories
+The work SHALL modify only `tpaktop-corne-zmk-config`; the view configuration, `nat` configuration, and QMK/Oryx reference MUST remain read-only.
 
-#### Scenario: Проверка границ изменений
-- **WHEN** change готов к review
-- **THEN** все коммиты и рабочая ветка находятся только в `tpaktop-corne-zmk-config`
+#### Scenario: Audit change boundaries
+- **WHEN** the change is ready for review
+- **THEN** all commits and the working branch exist only in `tpaktop-corne-zmk-config`
 
-### Requirement: Источник переноса документирован
-Документация SHALL указывать исходный репозиторий, commit и намеренные отличия донгловой конфигурации.
+### Requirement: Migration provenance is documented
+The documentation SHALL identify the source repository, source commit, and intentional differences in the dongle configuration.
 
-#### Scenario: Аудит происхождения
-- **WHEN** владелец открывает документацию миграции
-- **THEN** он видит `tpaktop-corne-wireless-view-zmk-config@e7d7c10` и список отличий, связанных только с topology, display, Studio, build и provisioning
+#### Scenario: Audit provenance
+- **WHEN** the owner opens the migration documentation
+- **THEN** it identifies `tpaktop-corne-wireless-view-zmk-config@e7d7c10` and lists differences limited to topology, display, Studio, build, provisioning, and documentation language
+
+### Requirement: Repository text is English-only
+All tracked prose, documentation, OpenSpec artifacts, and source comments SHALL be written in English and MUST NOT contain Cyrillic code points. Russian layout behavior SHALL remain unchanged and SHALL be described using Russian-PC aliases or Latin key names.
+
+#### Scenario: Search the repository before merge
+- **WHEN** the working tree is searched across the full Unicode Cyrillic range
+- **THEN** no tracked file matches and all Russian-layer bindings remain structurally unchanged

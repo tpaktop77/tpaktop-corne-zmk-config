@@ -1,85 +1,85 @@
-# Донгл: прошивка, pairing и rollback
+# Dongle flashing, pairing, and rollback
 
-Конфигурация использует стандартный BLE dongle mode ZMK v0.3. Отдельный `nice_nano_v2` является central и подключается к компьютеру по USB или через один из пяти Bluetooth profiles. Обе половины Corne являются BLE peripherals и без донгла не отправляют клавиши хосту.
+This configuration uses the standard ZMK v0.3 BLE dongle mode. A dedicated `nice_nano_v2` acts as the central and connects to a computer over USB or through one of five Bluetooth profiles. Both Corne halves are BLE peripherals and cannot send keys to a host without the dongle.
 
-Официальные reference:
+Official references:
 
 - [Keyboard Dongle](https://zmk.dev/docs/development/hardware-integration/dongle)
 - [Split Keyboards](https://zmk.dev/docs/features/split-keyboards)
 - [Connection Issues / settings reset](https://zmk.dev/docs/troubleshooting/connection-issues)
 
-## Содержимое firmware artifact
+## Firmware artifact contents
 
-GitHub Actions создаёт архив вида:
+GitHub Actions creates an archive named like this:
 
 ```text
 corne-dongle-firmware_YYYYMMDD_HHMM.zip
 ```
 
-Timestamp задаётся в UTC. Внутри находятся стабильные имена:
+The timestamp is UTC. The archive contains stable filenames:
 
-| Файл | Куда прошивать |
+| File | Flash destination |
 |---|---|
-| `tpaktop-corne-dongle.uf2` | отдельный `nice_nano_v2`-донгл |
-| `corne-left-peripheral.uf2` | контроллер левой Corne |
-| `corne-right-peripheral.uf2` | контроллер правой Corne |
-| `settings-reset-nice-nano-v2.uf2` | по очереди на все три контроллера перед первой установкой или восстановлением bonds |
+| `tpaktop-corne-dongle.uf2` | dedicated `nice_nano_v2` dongle |
+| `corne-left-peripheral.uf2` | left Corne controller |
+| `corne-right-peripheral.uf2` | right Corne controller |
+| `settings-reset-nice-nano-v2.uf2` | each of the three controllers in turn before first installation or bond recovery |
 
-Не прошивай dongle/left/right UF2 на другое устройство: split role является частью firmware.
+Do not flash a dongle, left, or right UF2 to a different device: the split role is part of the firmware.
 
-## Первый переход на донгл
+## First migration to the dongle
 
-Старая прошивка хранит bonds для topology с левой central. Обычная прошивка их не стирает, поэтому reset всех трёх устройств обязателен.
+The old firmware stores bonds for a topology with the left half as central. A normal firmware update does not erase them, so all three devices require a reset.
 
-1. Скачать и распаковать последний датированный artifact.
-2. Перевести донгл в bootloader и скопировать на него `settings-reset-nice-nano-v2.uf2`; дождаться перезапуска.
-3. Повторить settings reset отдельно для левой и правой половины.
-4. Снова открыть bootloader донгла и прошить `tpaktop-corne-dongle.uf2`.
-5. Прошить левую половину файлом `corne-left-peripheral.uf2`.
-6. Прошить правую половину файлом `corne-right-peripheral.uf2`.
-7. Подключить донгл к компьютеру по USB, затем включить обе половины.
-8. Убедиться, что оба nice!view показывают connected status; первый split pairing может занять несколько секунд.
-9. Проверить ввод с каждой половины, cross-half combo и ZMK Studio через USB-донгл.
-10. Для BLE выбрать свободный `BT0`–`BT4` на System layer и выполнить pairing компьютера именно с донглом.
+1. Download and extract the latest timestamped artifact.
+2. Put the dongle into its bootloader, copy `settings-reset-nice-nano-v2.uf2` to it, and allow it to reboot.
+3. Repeat the settings reset separately on the left and right halves.
+4. Open the dongle bootloader again and flash `tpaktop-corne-dongle.uf2`.
+5. Flash `corne-left-peripheral.uf2` to the left half.
+6. Flash `corne-right-peripheral.uf2` to the right half.
+7. Connect the dongle to the computer over USB, then power on both halves.
+8. Confirm that both nice!view displays show connected status; initial split pairing can take several seconds.
+9. Test input from each half, a cross-half combo, and ZMK Studio through the USB dongle.
+10. For BLE, select an unused `BT0`-`BT4` profile on the System layer and pair the computer with the dongle itself.
 
-## Что показывают nice!view
+## nice!view contents
 
-Каждый экран относится только к своей половине и показывает:
+Each display represents only its own half and shows:
 
-- локальный процент заряда;
-- индикатор USB-зарядки;
-- connected/disconnected status связи с донглом.
+- local battery percentage;
+- USB charging status;
+- connected or disconnected state for the dongle link.
 
-На половины не передаются активный слой, OS profile, host Bluetooth profile или заряд второй половины. Декоративный nice!view custom widget отключён в пользу встроенного status screen ZMK. `CONFIG_ZMK_DISPLAY_WORK_QUEUE_DEDICATED=y` задан явно, поэтому LVGL updates выполняются в отдельной display work queue, а не в системной очереди.
+The halves do not receive the active layer, OS profile, host Bluetooth profile, or the other half's battery level. The decorative nice!view custom widget is disabled in favor of ZMK's built-in status screen. `CONFIG_ZMK_DISPLAY_WORK_QUEUE_DEDICATED=y` is set explicitly, so LVGL updates run on a dedicated display work queue rather than the system queue.
 
-## Bluetooth и OS profile
+## Bluetooth and OS profile
 
-- `BT0`–`BT4` выбирают host profiles центрального донгла.
-- Split bonds обеих половин занимают отдельные central connections и не являются host profiles.
-- Windows/macOS/Linux остаётся независимым RAM-состоянием донгла.
-- После reboot OS profile снова Windows, base layer снова Graphite.
-- Смена BT profile не меняет OS profile и наоборот.
+- `BT0`-`BT4` select host profiles on the central dongle.
+- The two split bonds occupy separate central connections and are not host profiles.
+- Windows, macOS, or Linux is an independent in-memory dongle state.
+- After reboot, the OS profile returns to Windows and the base layer returns to Graphite.
+- Changing a Bluetooth profile does not change the OS profile, and vice versa.
 
-## Если половина не подключается
+## If a half does not connect
 
-1. Оставить донгл подключённым по USB и перезапустить проблемную половину.
-2. Проверить, что на половине прошит правильный peripheral UF2.
-3. Если связь не появилась, повторить полный settings reset на всех трёх устройствах, а не только на одной половине.
-4. Повторить установку трёх рабочих UF2 в порядке dongle → left → right.
+1. Leave the dongle connected over USB and restart the affected half.
+2. Confirm that the correct peripheral UF2 is installed on that half.
+3. If the link does not recover, repeat the complete settings reset on all three devices rather than on only one half.
+4. Reinstall the three operational UF2 files in dongle, left, right order.
 
-Battery-level fetching/proxy на central намеренно выключены: донгл не собирает заряд половин, а каждый nice!view читает локальную батарею.
+Battery-level fetching and proxy are intentionally disabled on the central: the dongle does not retrieve half battery levels, and each nice!view reads its own local battery.
 
-## Обновление исправления 6-column mapping
+## Updating the 6-column mapping fix
 
-Обе peripheral firmware жёстко отключают альтернативный in-tree layout `5 Column`; рабочим остаётся только полный Corne `6 Column`. Если dongle topology уже установлена и обе половины подключаются, для обновления достаточно прошить новые `corne-left-peripheral.uf2` и `corne-right-peripheral.uf2`, затем перезапустить половины. Повторный settings reset и перепрошивка донгла для этого обновления не требуются.
+Both peripheral images explicitly disable the alternative in-tree `5 Column` layout, leaving only the full Corne `6 Column` layout enabled. If dongle topology is already installed and both halves connect, update by flashing new `corne-left-peripheral.uf2` and `corne-right-peripheral.uf2` files and restarting the halves. This update does not require another settings reset or dongle reflash.
 
-## Rollback к конфигурации без донгла
+## Rollback to the configuration without a dongle
 
-Стабильный `tpaktop-corne-wireless-view-zmk-config` не изменяется этой миграцией.
+This migration does not modify the stable `tpaktop-corne-wireless-view-zmk-config` repository.
 
-1. Скачать последнюю успешную left/right firmware из view-репозитория.
-2. Прошить `settings_reset` на обе половины и дать им загрузиться.
-3. Прошить прежние central-left и peripheral-right UF2.
-4. Повторно выполнить split/host pairing согласно прежней конфигурации.
+1. Download the latest successful left/right firmware from the view repository.
+2. Flash `settings_reset` to both halves and allow it to boot.
+3. Flash the previous central-left and peripheral-right UF2 files.
+4. Repeat split and host pairing for the previous configuration.
 
-Донгл после rollback можно выключить; его settings не влияют на восстановленные половины.
+The dongle can be powered off after rollback; its settings do not affect the restored halves.

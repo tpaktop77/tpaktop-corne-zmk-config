@@ -1,30 +1,30 @@
 ## Purpose
 
-Создаёт воспроизводимый комплект прошивок для трёх устройств и reset-процедуры с автоматически датированным, легко различимым архивом GitHub Actions.
+Creates a reproducible firmware set for three devices plus a reset image in an automatically timestamped and easily distinguishable GitHub Actions archive.
 
 ## ADDED Requirements
 
-### Requirement: Workflow собирает полный firmware-комплект
-Каждый workflow run SHALL собирать dongle central, `corne_left` peripheral, `corne_right` peripheral и один совместимый `settings_reset` image для `nice_nano_v2`.
+### Requirement: The workflow builds the complete firmware set
+Every workflow run SHALL build the dongle central, `corne_left` peripheral, `corne_right` peripheral, and one compatible `settings_reset` image for `nice_nano_v2`.
 
-#### Scenario: Успешная сборка
-- **WHEN** push, pull request или manual dispatch запускает workflow
-- **THEN** все четыре targets успешно проходят West/Kconfig/Devicetree build и попадают в один artifact
+#### Scenario: Successful build
+- **WHEN** a push, pull request, or manual dispatch starts the workflow
+- **THEN** all four targets complete West/Kconfig/Devicetree builds and are included in one artifact
 
-#### Scenario: Ошибка одного target
-- **WHEN** любой обязательный target не собирается
-- **THEN** workflow завершается неуспешно и change не считается готовым к прошивке
+#### Scenario: One target fails
+- **WHEN** any required target fails to build
+- **THEN** the workflow fails and the change is not considered ready to flash
 
-### Requirement: UF2 имеют стабильные имена
-Внутри объединённого архива UF2-файлы SHALL иметь постоянные имена, однозначно различающие dongle, left, right и settings reset.
+### Requirement: UF2 files have stable names
+UF2 files inside the merged archive SHALL have stable names that unambiguously distinguish dongle, left, right, and settings reset images.
 
-#### Scenario: Содержимое архива
-- **WHEN** пользователь распаковывает artifact
-- **THEN** назначение каждого UF2 определяется из имени без переименования вручную
+#### Scenario: Inspect archive contents
+- **WHEN** the user extracts the artifact
+- **THEN** each UF2 destination can be determined from its filename without manual renaming
 
-### Requirement: Имя архива содержит UTC timestamp
-Имя объединённого artifact SHALL содержать время начала сборки в UTC в формате `YYYYMMDD_HHMM`.
+### Requirement: The archive name contains a UTC timestamp
+The merged artifact name SHALL contain the build start time in UTC using `YYYYMMDD_HHMM` format.
 
-#### Scenario: Загрузка двух сборок
-- **WHEN** пользователь скачивает artifacts разных workflow runs
-- **THEN** архивы имеют разные датированные имена вида `corne-dongle-firmware_YYYYMMDD_HHMM.zip`
+#### Scenario: Download two builds
+- **WHEN** the user downloads artifacts from different workflow runs
+- **THEN** the archives have distinct timestamped names in the form `corne-dongle-firmware_YYYYMMDD_HHMM.zip`

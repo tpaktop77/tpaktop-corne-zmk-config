@@ -1,154 +1,155 @@
 # Test matrix
 
-Статусы:
+Statuses:
 
-- `manual pending` — должен выполнить владелец физической клавиатуры; Codex не помечает её выполненной.
-- `pass` / `fail` — подтверждённый результат с evidence.
+- `manual pending` means the physical-keyboard owner must run the test; Codex does not mark it complete.
+- `pass` or `fail` records a confirmed result with evidence.
 
-## Static и OpenSpec
+## Static and OpenSpec
 
-| Проверка | Метод | Ожидаемый результат | Статус | Evidence |
+| Check | Method | Expected result | Status | Evidence |
 |---|---|---|---|---|
-| OpenSpec planning | `openspec status --change migrate-layout-to-dongle` | 4/4 artifacts complete | pass | proposal/design/6 specs/tasks созданы |
-| OpenSpec strict | `openspec validate migrate-layout-to-dongle --strict` | valid, 0 issues | pass | `Change 'migrate-layout-to-dongle' is valid` |
-| Source provenance | `git rev-parse` исходного clone | source равен `e7d7c10a2b5193f777c4907fc70111ddc94d18b8` | pass | source master проверен до переноса |
-| Baseline parity | `cmp` + `sha256sum` | keymap/module совпадают с source commit | pass | `corne.keymap` SHA-256 `5f91722b4c530fb4bf88bbd86a0fb42feda272a2181468412d3f3504c5b9ff8c` |
+| OpenSpec planning | `openspec status --change migrate-layout-to-dongle` | 4/4 artifacts complete | pass | proposal, design, six specs, and tasks exist |
+| OpenSpec strict | `openspec validate migrate-layout-to-dongle --strict` | valid, zero issues | pass | `Change 'migrate-layout-to-dongle' is valid` |
+| Source provenance | `git rev-parse` in the source clone | source is `e7d7c10a2b5193f777c4907fc70111ddc94d18b8` | pass | source master checked before migration |
+| Baseline behavior parity | source checksum plus focused diff | keymap/module bindings and timings match the source commit; only comments differ | pass | pre-translation `corne.keymap` SHA-256 `5f91722b4c530fb4bf88bbd86a0fb42feda272a2181468412d3f3504c5b9ff8c`; final keymap diff is comment-only |
+| English-only tracked text | full-tree Unicode Cyrillic-range `rg` search | no matches | pass | zero matching tracked files after translation |
 | Whitespace | `git diff --check` | no output, exit 0 | pass | exit 0, no output |
-| Layer sizes | structural script | 42 bindings на каждый активный слой | pass | Graphite–System: 12 × 42 |
-| Named layer refs | `rg` audit | нет необъяснимых layer numbers | pass | перенесённый keymap побайтно совпадает с source baseline |
-| Layer priority | structural audit | `GRAPHITE 0`, `QWERTY 1`, `RUSSIAN 2`; overlay выше base; node order совпадает с defines | pass | 15 named defines и прежний проверенный node order сохранены |
-| Dongle transform | token comparison с in-tree Corne v0.3 | те же 42 `RC(row,col)` в том же порядке | pass | 42/42 tokens exact match |
-| Peripheral physical layout | compiled Devicetree обеих половин | `5 Column` disabled; `6 Column` использует 42-позиционный `default_transform`; left без offset, right с `col-offset = 6` | pass | [left job 101220172228](https://github.com/tpaktop77/tpaktop-corne-zmk-config/actions/runs/33934665598/job/101220172228), [right job 101220172360](https://github.com/tpaktop77/tpaktop-corne-zmk-config/actions/runs/33934665598/job/101220172360) |
-| YAML syntax | Node `yaml` parser | `build.yaml` и workflow разбираются без ошибок | pass | обе YAML структуры parsed |
-| Exclusions | `rg` audit | нет battery proxy/fetching, layout behavior changes или Studio snippet на peripherals | pass | fetching/proxy явно `n`; один Studio snippet только у dongle |
-| Display queue | Kconfig audit | built-in nice!view updates выполняются через dedicated queue | pass | `CONFIG_ZMK_DISPLAY_WORK_QUEUE_DEDICATED=y`, system queue не выбран |
+| Layer sizes | structural script | 42 bindings on every active layer | pass | Graphite through System: 12 x 42 |
+| Named layer references | `rg` audit | no unexplained numeric layer references | pass | named references preserved from the source baseline |
+| Layer priority | structural audit | `GRAPHITE 0`, `QWERTY 1`, `RUSSIAN 2`; overlays above bases; node order matches defines | pass | 15 named defines and the tested node order are preserved |
+| Dongle transform | token comparison with in-tree ZMK v0.3 Corne | the same 42 `RC(row,col)` tokens in the same order | pass | 42/42 token exact match |
+| Peripheral physical layout | compiled Devicetree for both halves | `5 Column` disabled; `6 Column` uses the 42-position `default_transform`; no left offset and right `col-offset = 6` | pass | [left job 101220172228](https://github.com/tpaktop77/tpaktop-corne-zmk-config/actions/runs/33934665598/job/101220172228), [right job 101220172360](https://github.com/tpaktop77/tpaktop-corne-zmk-config/actions/runs/33934665598/job/101220172360) |
+| YAML syntax | Node `yaml` parser | `build.yaml` and the workflow parse without errors | pass | both YAML structures parsed |
+| Exclusions | `rg` audit | no battery proxy/fetching, layout behavior changes, or Studio snippet on peripherals | pass | fetching/proxy explicitly `n`; one Studio snippet only on the dongle |
+| Display queue | Kconfig audit | built-in nice!view updates use the dedicated queue | pass | `CONFIG_ZMK_DISPLAY_WORK_QUEUE_DEDICATED=y`; system queue not selected |
 
 ## Build matrix
 
-| Конфигурация | Ожидаемый результат | Статус | Evidence |
+| Configuration | Expected result | Status | Evidence |
 |---|---|---|---|
-| `nice_nano_v2 + tpaktop_corne_dongle + studio-rpc-usb-uart` | успешная central UF2 сборка | pass | [job 101220172259](https://github.com/tpaktop77/tpaktop-corne-zmk-config/actions/runs/33934665598/job/101220172259) |
-| `nice_nano_v2 + corne_left + tpaktop_corne_6col + nice_view_adapter + nice_view`, peripheral role | успешная left UF2 сборка | pass | [job 101220172228](https://github.com/tpaktop77/tpaktop-corne-zmk-config/actions/runs/33934665598/job/101220172228) |
-| `nice_nano_v2 + corne_right + tpaktop_corne_6col + nice_view_adapter + nice_view`, peripheral role | успешная right UF2 сборка | pass | [job 101220172360](https://github.com/tpaktop77/tpaktop-corne-zmk-config/actions/runs/33934665598/job/101220172360) |
-| `nice_nano_v2 + settings_reset` | успешная reset UF2 сборка | pass | [job 101220172257](https://github.com/tpaktop77/tpaktop-corne-zmk-config/actions/runs/33934665598/job/101220172257) |
-| merged artifact | четыре однозначно названных UF2 в `corne-dongle-firmware_YYYYMMDD_HHMM.zip` | pass | [run 33934665598](https://github.com/tpaktop77/tpaktop-corne-zmk-config/actions/runs/33934665598), artifact `corne-dongle-firmware_20260905_0057`, SHA-256 `2024d0fbeb8b498e8dee1e5655a09e8d490e47e38834e2a548a1d33380853e9f` |
+| `nice_nano_v2 + tpaktop_corne_dongle + studio-rpc-usb-uart` | successful central UF2 build | pass | [job 101220172259](https://github.com/tpaktop77/tpaktop-corne-zmk-config/actions/runs/33934665598/job/101220172259) |
+| `nice_nano_v2 + corne_left + tpaktop_corne_6col + nice_view_adapter + nice_view`, peripheral role | successful left UF2 build | pass | [job 101220172228](https://github.com/tpaktop77/tpaktop-corne-zmk-config/actions/runs/33934665598/job/101220172228) |
+| `nice_nano_v2 + corne_right + tpaktop_corne_6col + nice_view_adapter + nice_view`, peripheral role | successful right UF2 build | pass | [job 101220172360](https://github.com/tpaktop77/tpaktop-corne-zmk-config/actions/runs/33934665598/job/101220172360) |
+| `nice_nano_v2 + settings_reset` | successful reset UF2 build | pass | [job 101220172257](https://github.com/tpaktop77/tpaktop-corne-zmk-config/actions/runs/33934665598/job/101220172257) |
+| merged artifact | four unambiguously named UF2 files in `corne-dongle-firmware_YYYYMMDD_HHMM.zip` | pass | [run 33934665598](https://github.com/tpaktop77/tpaktop-corne-zmk-config/actions/runs/33934665598), artifact `corne-dongle-firmware_20260905_0057`, SHA-256 `2024d0fbeb8b498e8dee1e5655a09e8d490e47e38834e2a548a1d33380853e9f` |
 
-## Layout и переключение
+## Layout and switching
 
-| Проверка | Transport | Ожидаемый результат | Статус |
+| Check | Transport | Expected result | Status |
 |---|---|---|---|
-| Reboot default | USB и BLE | Graphite активен, QWERTY не выбран | manual pending |
-| Graphite 26 letters | USB и BLE | три ряда соответствуют Oryx, Num Lock на position 6 | manual pending |
-| Graphite Escape | USB и BLE | position 0 отправляет Escape | manual pending |
-| Graphite empty positions | USB и BLE | positions 11,12,23,32–34 не печатают keycodes | manual pending |
-| Graphite → Russian | USB и BLE | position 24 отправляет Ctrl+Shift+2 и прямо выбирает Russian | manual pending |
-| Graphite → QWERTY | USB и BLE | position 35 прямо выбирает QWERTY | manual pending |
-| QWERTY 26 letters | USB и BLE | только стандартные английские буквы | manual pending |
-| QWERTY forbidden body keys | USB и BLE | нет Tab/Esc/Ctrl/Shift/punctuation | manual pending |
-| QWERTY → Graphite | USB и BLE | position 35 прямо возвращает Graphite | manual pending |
-| Reboot from QWERTY | USB и BLE | после reboot снова Graphite | manual pending |
+| Reboot default | USB and BLE | Graphite active; QWERTY not selected | manual pending |
+| Graphite 26 letters | USB and BLE | three rows match Oryx; Num Lock at position 6 | manual pending |
+| Graphite Escape | USB and BLE | position 0 sends Escape | manual pending |
+| Graphite empty positions | USB and BLE | positions 11, 12, 23, and 32-34 send no keycodes | manual pending |
+| Graphite to Russian | USB and BLE | position 24 sends Ctrl+Shift+2 and directly selects Russian | manual pending |
+| Graphite to QWERTY | USB and BLE | position 35 directly selects QWERTY | manual pending |
+| QWERTY 26 letters | USB and BLE | only standard English letters | manual pending |
+| QWERTY forbidden body keys | USB and BLE | no Tab, Escape, Ctrl, Shift, or punctuation | manual pending |
+| QWERTY to Graphite | USB and BLE | position 35 directly returns to Graphite | manual pending |
+| Reboot from QWERTY | USB and BLE | Graphite is active again after reboot | manual pending |
 
-## Russian layout и язык хоста
+## Russian layout and host language
 
-Precondition для каждого Windows/macOS/Linux хоста: `Ctrl+Shift+1` прямо выбирает English, `Ctrl+Shift+2` — Russian–PC. Повторить функциональные строки по USB и BLE; для split отдельно вводить клавиши обеих половин.
+Precondition on each Windows, macOS, and Linux host: `Ctrl+Shift+1` directly selects English and `Ctrl+Shift+2` directly selects Russian-PC. Repeat functional rows over USB and BLE, and exercise keys from both halves separately.
 
-| Проверка | Transport/OS | Ожидаемый результат | Статус |
+| Check | Transport/OS | Expected result | Status |
 |---|---|---|---|
-| Russian 33 letters | USB/BLE, Windows | позиции 1–11, 13–23, 25–35 печатают точные строчные `йцукенгшщзх / фывапролджэ / ячсмитьбюёъ` | manual pending |
-| Russian 33 letters | USB/BLE, macOS | тот же positional output при Russian–PC | manual pending |
-| Russian 33 letters | USB/BLE, Linux | тот же positional output при Russian–PC | manual pending |
-| Russian position 0 fallback | USB/BLE | прозрачная клавиша отправляет Graphite Escape | manual pending |
-| Russian position 12 fallback | USB/BLE | прозрачная клавиша падает в Graphite none и ничего не отправляет | manual pending |
-| Graphite language combo | USB/BLE | positions 7+8+9 отправляют Ctrl+Shift+2 и активируют Russian | manual pending |
-| Russian language combo | USB/BLE | positions 7+8+9 отправляют Ctrl+Shift+1 и активируют Graphite | manual pending |
-| Russian → Graphite | USB/BLE | position 24 выполняет тот же направленный выход | manual pending |
-| QWERTY independence | USB/BLE | language combo не включено на QWERTY; русский выход всегда ведёт в Graphite | manual pending |
-| External host language change | USB/BLE | после ручной рассинхронизации направленный вход/выход снова задаёт ожидаемую пару layer+language | manual pending |
-| Reboot from Russian | USB/BLE | base layer снова Graphite, OS profile снова Windows; host language до macro не заявляется синхронным | manual pending |
+| Russian 33 letters | USB/BLE, Windows | positions 1-11, 13-23, and 25-35 produce the lowercase alias sequence `RU_SHTI..RU_HA / RU_EF..RU_E / RU_YA..RU_HARD` under Russian-PC | manual pending |
+| Russian 33 letters | USB/BLE, macOS | the same positional output under Russian-PC | manual pending |
+| Russian 33 letters | USB/BLE, Linux | the same positional output under Russian-PC | manual pending |
+| Russian position 0 fallback | USB/BLE | transparent key sends Graphite Escape | manual pending |
+| Russian position 12 fallback | USB/BLE | transparent key falls through to Graphite none and sends nothing | manual pending |
+| Graphite language combo | USB/BLE | positions 7+8+9 send Ctrl+Shift+2 and activate Russian | manual pending |
+| Russian language combo | USB/BLE | positions 7+8+9 send Ctrl+Shift+1 and activate Graphite | manual pending |
+| Russian to Graphite | USB/BLE | position 24 performs the same directed exit | manual pending |
+| QWERTY independence | USB/BLE | language combo is not enabled on QWERTY; Russian exit always targets Graphite | manual pending |
+| External host-language change | USB/BLE | after deliberate desynchronization, a directed enter/exit action restores the expected layer/language pair | manual pending |
+| Reboot from Russian | USB/BLE | base layer returns to Graphite and OS profile returns to Windows; host language is not claimed synchronized until a macro runs | manual pending |
 
-## Russian Symbols и Smiles
+## Russian Symbols and Smiles
 
-| Проверка | Transport | Ожидаемый результат | Статус |
+| Check | Transport | Expected result | Status |
 |---|---|---|---|
-| Russian Symbols row 0 | USB/BLE | positions 3,4,6–11 печатают `( ) № _ - / \\ -` при Russian–PC | manual pending |
-| Russian Symbols row 1 | USB/BLE | positions 19–23 печатают `. , ! ? /` при Russian–PC | manual pending |
-| Russian Symbols row 2 | USB/BLE | positions 31–35 печатают `" : ; = *` при Russian–PC | manual pending |
-| Symbols top-row exclusions | USB/BLE | `%`, `₽`, `+` не были перенесены на новые позиции | manual pending |
-| Symbols transparent thumbs | USB/BLE | positions 36–39/41 наследуют Russian, position 40 tap = Space | manual pending |
-| Russian Smiles thumb hold | USB/BLE | удержание position 40 на Symbols открывает Russian Smiles до release | manual pending |
-| Russian smile happy | USB/BLE | Russian Smiles position 19 печатает `:)` | manual pending |
-| Russian smile sad | USB/BLE | Russian Smiles position 20 печатает `:(` | manual pending |
-| Russian Smiles combo | USB/BLE | Russian positions 5+17 держат Russian Smiles до отпускания последней клавиши | manual pending |
+| Russian Symbols row 0 | USB/BLE | positions 3, 4, and 6-11 produce LeftParen, RightParen, NumberSign, Underscore, Minus, Slash, Backslash, Minus under Russian-PC | manual pending |
+| Russian Symbols row 1 | USB/BLE | positions 19-23 produce Dot, Comma, Exclamation, Question, Slash under Russian-PC | manual pending |
+| Russian Symbols row 2 | USB/BLE | positions 31-35 produce DoubleQuote, Colon, Semicolon, Equal, Asterisk under Russian-PC | manual pending |
+| Symbols top-row exclusions | USB/BLE | Percent, Ruble Sign, and Plus were not moved to new positions | manual pending |
+| Symbols transparent thumbs | USB/BLE | positions 36-39 and 41 inherit Russian; tapping position 40 sends Space | manual pending |
+| Russian Smiles thumb hold | USB/BLE | holding position 40 on Symbols opens Russian Smiles until release | manual pending |
+| Russian smile happy | USB/BLE | Russian Smiles position 19 sends `:)` | manual pending |
+| Russian smile sad | USB/BLE | Russian Smiles position 20 sends `:(` | manual pending |
+| Russian Smiles combo | USB/BLE | Russian positions 5+17 hold Russian Smiles until the last key is released | manual pending |
 
 ## Thumb layer-tap
 
-Проверить отдельно на Graphite, QWERTY и Russian, по USB и BLE. На Russian position 37 открывает Russian Symbols; остальные назначения совпадают.
+Test separately on Graphite, QWERTY, and Russian over USB and BLE. On Russian, position 37 opens Russian Symbols; all other assignments match.
 
-| Position | Tap | Hold | Ожидаемый результат | Статус |
+| Position | Tap | Hold | Expected result | Status |
 |---:|---|---|---|---|
-| 36 | — | System | слой активен только до release | manual pending |
-| 37 | Backspace | Symbols | tap повторяется через quick-tap; hold открывает Symbols | manual pending |
-| 38 | Delete | Numbers | tap удаляет; hold открывает Numbers | manual pending |
-| 39 | Tab | Function | tap Tab; hold Function | manual pending |
-| 40 | Space | Navigation | tap Space; hold Navigation | manual pending |
-| 41 | none | none | ничего не происходит | manual pending |
+| 36 | none | System | layer remains active only until release | manual pending |
+| 37 | Backspace | Symbols | tap repeats through quick-tap; hold opens Symbols | manual pending |
+| 38 | Delete | Numbers | tap deletes; hold opens Numbers | manual pending |
+| 39 | Tab | Function | tap sends Tab; hold opens Function | manual pending |
+| 40 | Space | Navigation | tap sends Space; hold opens Navigation | manual pending |
+| 41 | none | none | nothing happens | manual pending |
 
-### Регрессия thumb-кластера на Russian
+### Russian thumb-cluster regression
 
-PR #5 собирался успешно, но аппаратно `RUSSIAN = 9` маскировал более низкий `NAVIGATION = 3`. После исправления повторить каждую строку отдельно по USB и BLE; проверки на Graphite и QWERTY служат контролем, что их прежнее поведение сохранилось.
+PR #5 built successfully, but on hardware `RUSSIAN = 9` masked the lower `NAVIGATION = 3`. After the fix, repeat every row over USB and BLE. Graphite and QWERTY checks confirm that their previous behavior remains intact.
 
-| Position | Hold target | Проверка на Russian | До исправления | USB после исправления | BLE после исправления |
+| Position | Hold target | Check on Russian | Before fix | USB after fix | BLE after fix |
 |---:|---|---|---|---|---|
-| 36 | System | видны BT0–BT4 и OS selectors; release возвращает Russian | не проверено | manual pending | manual pending |
-| 37 | Russian Symbols | видны русские символы; tap остаётся Backspace | работало | manual pending | manual pending |
-| 38 | Numbers | видны цифры; tap остаётся Delete | не проверено | manual pending | manual pending |
-| 39 | Function | видны F-клавиши; tap остаётся Tab | не проверено | manual pending | manual pending |
-| 40 | Navigation | стрелки/навигация перекрывают русские буквы; tap остаётся Space | fail: оставался Russian | manual pending | manual pending |
-| 41 | none | ничего не происходит | не проверено | manual pending | manual pending |
+| 36 | System | BT0-BT4 and OS selectors are visible; release returns to Russian | not tested | manual pending | manual pending |
+| 37 | Russian Symbols | Russian-PC symbols are visible; tap remains Backspace | worked | manual pending | manual pending |
+| 38 | Numbers | digits are visible; tap remains Delete | not tested | manual pending | manual pending |
+| 39 | Function | F-keys are visible; tap remains Tab | not tested | manual pending | manual pending |
+| 40 | Navigation | arrows/navigation override Russian letters; tap remains Space | fail: remained on Russian | manual pending | manual pending |
+| 41 | none | nothing happens | not tested | manual pending | manual pending |
 
-Дополнительно на `RUSSIAN_SYMBOLS` удержание position 40 SHALL открывать `RUSSIAN_SMILES` и возвращать Symbols после release; проверить по USB и BLE (`manual pending`).
+Additionally, holding position 40 on `RUSSIAN_SYMBOLS` SHALL open `RUSSIAN_SMILES` and return to Symbols on release; verify over USB and BLE (`manual pending`).
 
 ## Auto Shift
 
-| Проверка | Layout | Transport | Ожидаемый результат | Статус |
+| Check | Layout | Transport | Expected result | Status |
 |---|---|---|---|---|
-| tap <300 ms каждой буквы | Graphite | USB/BLE | lowercase/plain keycode | manual pending |
-| hold >300 ms каждой буквы | Graphite | USB/BLE | Shift + та же буква | manual pending |
-| tap <300 ms каждой буквы | QWERTY | USB/BLE | lowercase/plain keycode | manual pending |
-| hold >300 ms каждой буквы | QWERTY | USB/BLE | Shift + та же буква | manual pending |
-| быстрый обычный набор | Graphite/QWERTY/Russian | USB/BLE | ложные заглавные буквы, наблюдавшиеся при 250 мс, больше не возникают | manual pending |
-| digits/NumLock/thumbs/function/symbols | все | USB/BLE | Auto Shift не применяется | manual pending |
-| quick-tap Backspace | Graphite/QWERTY/Russian | USB/BLE | `&lt.quick-tap-ms = 250` и auto-repeat удаления не изменились | manual pending |
-| tap <300 ms каждой из 33 букв | Russian | USB/BLE | строчная Russian–PC буква | manual pending |
-| hold >300 ms каждой из 33 букв | Russian | USB/BLE | Shift + тот же usage формирует заглавную букву | manual pending |
-| Russian symbols/smiles/thumbs/language actions | Russian | USB/BLE | Auto Shift не применяется | manual pending |
+| tap each letter for less than 300 ms | Graphite | USB/BLE | lowercase/plain keycode | manual pending |
+| hold each letter for more than 300 ms | Graphite | USB/BLE | Shift plus the same letter | manual pending |
+| tap each letter for less than 300 ms | QWERTY | USB/BLE | lowercase/plain keycode | manual pending |
+| hold each letter for more than 300 ms | QWERTY | USB/BLE | Shift plus the same letter | manual pending |
+| normal fast typing | Graphite/QWERTY/Russian | USB/BLE | no false uppercase letters previously observed at 250 ms | manual pending |
+| digits, Num Lock, thumbs, function keys, symbols | all | USB/BLE | Auto Shift does not apply | manual pending |
+| quick-tap Backspace | Graphite/QWERTY/Russian | USB/BLE | `&lt.quick-tap-ms = 250` and deletion auto-repeat are unchanged | manual pending |
+| tap each of 33 Russian positions for less than 300 ms | Russian | USB/BLE | lowercase Russian-PC output | manual pending |
+| hold each of 33 Russian positions for more than 300 ms | Russian | USB/BLE | Shift plus the same usage produces uppercase output | manual pending |
+| Russian symbols, smiles, thumbs, language actions | Russian | USB/BLE | Auto Shift does not apply | manual pending |
 
-## Combo — обычные и layer actions
+## Regular and layer-action combos
 
-Каждая совместимая базовая строка проверяется на Graphite, QWERTY и Russian по одинаковым физическим positions; arithmetic — только Numbers. Обычный быстрый набор на всех трёх layout не должен вызывать ложные combo.
+Test every compatible base row on Graphite, QWERTY, and Russian using the same physical positions; arithmetic combos are Numbers-only. Normal fast typing on all three layouts must not trigger false combos.
 
-| Combo | Positions | Scope | Ожидаемый результат | USB | BLE |
+| Combo | Positions | Scope | Expected result | USB | BLE |
 |---|---|---|---|---|---|
 | Enter | 19 20 21 | Graphite/QWERTY/Russian | Enter | manual pending | manual pending |
 | Tab | 14 15 16 | Graphite/QWERTY/Russian | Tab | manual pending | manual pending |
 | Caps Word | 13 16 | Graphite/QWERTY/Russian | toggle Caps Word | manual pending | manual pending |
 | Caps Lock | 13 17 | Graphite/QWERTY/Russian | Caps Lock | manual pending | manual pending |
-| Smiles | 5 17 | Graphite/QWERTY | momentary Smiles до полного release | manual pending | manual pending |
-| Russian Smiles | 5 17 | Russian | momentary Russian Smiles до полного release | manual pending | manual pending |
+| Smiles | 5 17 | Graphite/QWERTY | momentary Smiles until full release | manual pending | manual pending |
+| Russian Smiles | 5 17 | Russian | momentary Russian Smiles until full release | manual pending | manual pending |
 | Vim | 19 22 | Graphite/QWERTY | one-shot Vim | manual pending | manual pending |
-| Vim positions | 19 22 | Russian | Vim не активируется | manual pending | manual pending |
-| To Russian | 7 8 9 | Graphite | Ctrl+Shift+2, затем Russian | manual pending | manual pending |
-| To English | 7 8 9 | Russian | Ctrl+Shift+1, затем Graphite | manual pending | manual pending |
+| Vim positions | 19 22 | Russian | Vim does not activate | manual pending | manual pending |
+| To Russian | 7 8 9 | Graphite | Ctrl+Shift+2, then Russian | manual pending | manual pending |
+| To English | 7 8 9 | Russian | Ctrl+Shift+1, then Graphite | manual pending | manual pending |
 | Minus | 7 8 9 | Numbers only | `-` | manual pending | manual pending |
 | Equal | 19 20 21 | Numbers only | `=` | manual pending | manual pending |
 | Plus | 31 32 33 | Numbers only | `+` | manual pending | manual pending |
 | Slash | 19 20 21 22 | Numbers only | `/` | manual pending | manual pending |
 | Asterisk | 31 32 33 34 | Numbers only | `*` | manual pending | manual pending |
-| arithmetic positions outside Numbers | same | other layers | combo не срабатывает | manual pending | manual pending |
+| arithmetic positions outside Numbers | same | other layers | combo does not trigger | manual pending | manual pending |
 
-## Combo — slow-release modifiers
+## Slow-release modifier combos
 
-Для каждой строки: chord нажимает modifier; отпускание одной входящей клавиши сохраняет modifier; отпускание последней снимает modifier; после теста нет stuck modifier.
+For every row: the chord presses the modifier; releasing one source key retains it; releasing the last source key releases it; no modifier remains stuck afterward.
 
 | Combo | Positions | Modifier | Graphite | QWERTY | Russian | USB/BLE |
 |---|---|---|---|---|---|---|
@@ -161,41 +162,41 @@ PR #5 собирался успешно, но аппаратно `RUSSIAN = 9` �
 | Right GUI | 21 33 | RGUI | manual pending | manual pending | manual pending | manual pending |
 | Right Alt | 22 34 | RALT | manual pending | manual pending | manual pending | manual pending |
 
-Особо проверить Right Shift/GUI/Alt: underlying Graphite positions 32–34 равны `&none`, но combo должны работать.
+Pay particular attention to Right Shift, GUI, and Alt: underlying Graphite positions 32-34 are `&none`, but the combos must still work.
 
-## Перекрывающиеся combo
+## Overlapping combos
 
-| Короткое | Длинное | Transport | Ожидаемый результат | Статус |
+| Short | Long | Transport | Expected result | Status |
 |---|---|---|---|---|
-| Copy 2+14 | Cut 2+3+14+15 | USB | Cut не вызывает Copy/Paste | manual pending |
-| Copy 2+14 | Cut 2+3+14+15 | BLE | Cut не вызывает Copy/Paste | manual pending |
-| Equal 19+20+21 | Slash 19+20+21+22 | USB/BLE | Slash не вводит Equal | manual pending |
-| Plus 31+32+33 | Asterisk 31+32+33+34 | USB/BLE | Asterisk не вводит Plus | manual pending |
-| Enter 19+20+21 | App Switch 19+20+21+22 | USB/BLE | App Switch не отправляет Enter | manual pending |
-| Tab/Word BS/Caps Word | Task View 13+14+15+16 | USB/BLE | выполняется только Task View | manual pending |
-| только короткий chord | любой pair | USB/BLE | короткий распознаётся после overlap resolution | manual pending |
-| быстрый обычный текст | Graphite/QWERTY | USB/BLE | нет ложных combo | manual pending |
-| быстрый обычный текст | Russian | USB/BLE | нет ложных combo | manual pending |
+| Copy 2+14 | Cut 2+3+14+15 | USB | Cut does not invoke Copy/Paste | manual pending |
+| Copy 2+14 | Cut 2+3+14+15 | BLE | Cut does not invoke Copy/Paste | manual pending |
+| Equal 19+20+21 | Slash 19+20+21+22 | USB/BLE | Slash does not emit Equal | manual pending |
+| Plus 31+32+33 | Asterisk 31+32+33+34 | USB/BLE | Asterisk does not emit Plus | manual pending |
+| Enter 19+20+21 | App Switch 19+20+21+22 | USB/BLE | App Switch does not emit Enter | manual pending |
+| Tab/Word Backspace/Caps Word | Task View 13+14+15+16 | USB/BLE | only Task View executes | manual pending |
+| short chord only | any pair | USB/BLE | the short combo resolves after overlap handling | manual pending |
+| normal fast text | Graphite/QWERTY | USB/BLE | no false combos | manual pending |
+| normal fast text | Russian | USB/BLE | no false combos | manual pending |
 
 ## System/Bluetooth
 
-| Проверка | Ожидаемый результат | Статус |
+| Check | Expected result | Status |
 |---|---|---|
-| hold left outer thumb | System открывается momentary | manual pending |
-| BT0 | выбирается profile 0, OS не меняется | manual pending |
-| BT1 | выбирается profile 1, OS не меняется | manual pending |
-| BT2 | выбирается profile 2, OS не меняется | manual pending |
-| BT3 | выбирается profile 3, OS не меняется | manual pending |
-| BT4 | выбирается profile 4, OS не меняется | manual pending |
-| BT Clear tap <1500 ms | профиль не очищается | manual pending |
-| BT Clear + другая клавиша <1500 ms | профиль не очищается | manual pending |
-| BT Clear hold ≥1500 ms | выполняется BT_CLR | manual pending |
-| release System thumb | слой закрывается | manual pending |
-| OS selector positions | position 18 ничего не делает; positions 19/20/21 выбирают Windows/macOS/Linux | manual pending |
+| hold left outer thumb | System opens momentarily | manual pending |
+| BT0 | profile 0 selected; OS unchanged | manual pending |
+| BT1 | profile 1 selected; OS unchanged | manual pending |
+| BT2 | profile 2 selected; OS unchanged | manual pending |
+| BT3 | profile 3 selected; OS unchanged | manual pending |
+| BT4 | profile 4 selected; OS unchanged | manual pending |
+| BT Clear tap shorter than 1500 ms | profile is not cleared | manual pending |
+| BT Clear plus another key before 1500 ms | profile is not cleared | manual pending |
+| BT Clear hold at least 1500 ms | `BT_CLR` executes | manual pending |
+| release System thumb | layer closes | manual pending |
+| OS selector positions | position 18 does nothing; positions 19/20/21 select Windows/macOS/Linux | manual pending |
 
-## OS profile и действия
+## OS profile and actions
 
-Сначала выбрать профиль на System, затем вызвать каждое positional combo на Graphite, QWERTY и Russian. Для release-sensitive проверки удержать action, искусственно сменить профиль, отпустить action и убедиться в отсутствии stuck modifiers.
+Select a profile on System, then invoke every positional combo on Graphite, QWERTY, and Russian. For the release-sensitive check, hold an action, artificially change profile, release the action, and confirm there are no stuck modifiers.
 
 | Action | Windows | macOS | Linux | USB | BLE |
 |---|---|---|---|---|---|
@@ -213,68 +214,68 @@ PR #5 собирался успешно, но аппаратно `RUSSIAN = 9` �
 | TASK_VIEW | GUI+Tab | Ctrl+Up | GUI+Tab | manual pending | manual pending |
 | VOICE | GUI+H | `C_VOICE_COMMAND` | GUI+H | manual pending | manual pending |
 
-Дополнительные state tests:
+Additional state tests:
 
-| Проверка | Ожидаемый результат | Статус |
+| Check | Expected result | Status |
 |---|---|---|
-| reboot после macOS/Linux | профиль снова Windows | manual pending |
-| выбор OS profile | active keymap layer не меняется | manual pending |
-| Graphite↔QWERTY | OS profile не меняется | manual pending |
-| BT0–BT4 | OS profile не меняется | manual pending |
-| language macro | OS и BT profiles не меняются | manual pending |
-| OS selector while Russian active | Russian layer и host language не меняются | manual pending |
-| action press → OS change → release | освобождается исходный HID code, stuck modifiers нет | manual pending |
-| macOS Voice | Siri/voice вызывается consumer usage 0xCF | manual pending |
+| reboot after macOS/Linux | profile returns to Windows | manual pending |
+| select OS profile | active keymap layer does not change | manual pending |
+| Graphite to/from QWERTY | OS profile does not change | manual pending |
+| BT0-BT4 | OS profile does not change | manual pending |
+| language macro | OS and Bluetooth profiles do not change | manual pending |
+| OS selector while Russian is active | Russian layer and host language do not change | manual pending |
+| action press, OS change, action release | original HID code is released; no stuck modifiers | manual pending |
+| macOS Voice | consumer usage 0xCF invokes Siri/voice | manual pending |
 
-## Split, nice!view и Studio
+## Split, nice!view, and Studio
 
-| Проверка | Ожидаемый результат | Статус |
+| Check | Expected result | Status |
 |---|---|---|
-| dongle central cold boot | после запуска принимает обе ранее сопряжённые peripherals | manual pending |
-| левая peripheral half | все позиции передаются dongle central, нет reset/disconnect | manual pending |
-| правая peripheral half | все позиции передаются тому же central, нет reset/disconnect | manual pending |
-| initial peripheral mapping, 2026-09-05 | после полного settings reset right home row ожидался `YHAEI`, получен `TSGYH`; left показал то же смещение | fail: обе половины использовали 5-column mapping |
-| fixed 6-column mapping | left home row = `none NRTSG`, right home row = `YHAEI`; внешние колонки и thumbs не смещены | manual pending после прошивки новых left/right UF2 |
-| cross-half combo | chord из позиций обеих рук распознаётся central один раз | manual pending |
-| работа без донгла | половины не отправляют keyboard HID напрямую хосту | manual pending |
-| reconnect left | после выключения/включения left сама возвращается к central | manual pending |
-| reconnect right | после выключения/включения right сама возвращается к central | manual pending |
-| nice!view left | локальный процент/зарядка/link; нет layer/art/host profile; ввод не задерживается при update | manual pending |
-| nice!view right | локальный процент/зарядка/link; нет layer/art/host profile; ввод не задерживается при update | manual pending |
-| ZMK Studio USB | подключается через dongle central snippet | manual pending |
-| Studio reserved layers | доступны три reserved entries | manual pending |
-| Studio Russian layers | видны display names Russian, Russian Symbols, Russian Smiles; reserved entries остаются тремя | manual pending |
-| Studio source-of-truth | перезагрузка возвращает version-controlled behaviors/combo | manual pending |
+| dongle central cold boot | accepts both previously paired peripherals after startup | manual pending |
+| left peripheral half | every position reaches the dongle central; no reset/disconnect | manual pending |
+| right peripheral half | every position reaches the same central; no reset/disconnect | manual pending |
+| initial peripheral mapping, 2026-09-05 | after a complete settings reset, right home row expected `YHAEI` but produced `TSGYH`; left showed the matching shift | fail: both halves used 5-column mapping |
+| fixed 6-column mapping | left home row is `none NRTSG`, right home row is `YHAEI`; outer columns and thumbs are not shifted | manual pending after flashing new left/right UF2 files |
+| cross-half combo | a chord containing positions from both hands is recognized once by the central | manual pending |
+| operation without dongle | halves do not send keyboard HID directly to the host | manual pending |
+| reconnect left | left reconnects to the central after a power cycle | manual pending |
+| reconnect right | right reconnects to the central after a power cycle | manual pending |
+| nice!view left | local percentage/charging/link; no layer/art/host profile; display updates do not delay input | manual pending |
+| nice!view right | local percentage/charging/link; no layer/art/host profile; display updates do not delay input | manual pending |
+| ZMK Studio USB | connects through the dongle central snippet | manual pending |
+| Studio reserved layers | three reserved entries are available | manual pending |
+| Studio Russian layers | display names Russian, Russian Symbols, and Russian Smiles are visible; three reserved entries remain | manual pending |
+| Studio source of truth | reboot restores version-controlled behaviors and combos | manual pending |
 
-## Provisioning, endpoints и упаковка
+## Provisioning, endpoints, and packaging
 
-| Проверка | Ожидаемый результат | Статус |
+| Check | Expected result | Status |
 |---|---|---|
-| settings reset dongle | reset UF2 очищает прежние bonds до рабочей прошивки | manual pending |
-| settings reset left | reset UF2 очищает прежнюю central-left topology | manual pending |
-| settings reset right | reset UF2 очищает прежний peripheral bond | manual pending |
-| firmware mapping | dongle/left/right UF2 прошиты только на соответствующие устройства | manual pending |
-| USB endpoint | ввод обеих половин приходит через подключённый USB-донгл | manual pending |
-| BLE endpoint | хост paired с донглом; ввод обеих половин приходит через выбранный `BT0`–`BT4` | manual pending |
-| пять host profiles | BT0–BT4 выбираются независимо и не вытесняют split bonds | manual pending |
-| timestamp | имя скачанного архива соответствует `corne-dongle-firmware_YYYYMMDD_HHMM.zip` в UTC | pass: `corne-dongle-firmware_20260905_0057` |
-| stable filenames | архив содержит dongle, left, right и settings-reset UF2 с документированными именами | pass: `tpaktop-corne-dongle.uf2`, `corne-left-peripheral.uf2`, `corne-right-peripheral.uf2`, `settings-reset-nice-nano-v2.uf2` |
-| rollback | после повторного reset прежняя view firmware восстанавливает central-left topology | manual pending |
+| settings reset dongle | reset UF2 clears previous bonds before operational firmware | manual pending |
+| settings reset left | reset UF2 clears the previous central-left topology | manual pending |
+| settings reset right | reset UF2 clears the previous peripheral bond | manual pending |
+| firmware mapping | dongle/left/right UF2 files are flashed only to their corresponding devices | manual pending |
+| USB endpoint | input from both halves arrives through the connected USB dongle | manual pending |
+| BLE endpoint | host is paired with the dongle; input from both halves arrives through selected `BT0`-`BT4` | manual pending |
+| five host profiles | BT0-BT4 select independently without displacing split bonds | manual pending |
+| timestamp | downloaded archive name matches UTC `corne-dongle-firmware_YYYYMMDD_HHMM.zip` | pass: `corne-dongle-firmware_20260905_0057` |
+| stable filenames | archive contains documented dongle, left, right, and settings-reset names | pass: `tpaktop-corne-dongle.uf2`, `corne-left-peripheral.uf2`, `corne-right-peripheral.uf2`, `settings-reset-nice-nano-v2.uf2` |
+| rollback | after another reset, previous view firmware restores central-left topology | manual pending |
 
-## Временный Russian Caps Word
+## Temporary Russian Caps Word
 
-Это намеренно ограниченный этап на встроенном ZMK v0.3 `continue-list`, не тест полного custom behavior.
+This is an intentionally limited test of the built-in ZMK v0.3 `continue-list`, not a test of complete custom behavior.
 
-| Проверка | Transport | Ожидаемый результат | Статус |
+| Check | Transport | Expected result | Status |
 |---|---|---|---|
-| Caps Word + обычные HID A–Z Russian letters | USB/BLE | соответствующие русские буквы автоматически заглавные | manual pending |
-| Caps Word + Х | USB/BLE | `х` остаётся строчной, но режим не завершается | manual pending |
-| Caps Word + Ъ | USB/BLE | `ъ` остаётся строчной, но режим не завершается | manual pending |
-| Caps Word + Ж | USB/BLE | `ж` остаётся строчной, но режим не завершается | manual pending |
-| Caps Word + Э | USB/BLE | `э` остаётся строчной, но режим не завершается | manual pending |
-| Caps Word + Б | USB/BLE | `б` остаётся строчной, но режим не завершается | manual pending |
-| Caps Word + Ю | USB/BLE | `ю` остаётся строчной, но режим не завершается | manual pending |
-| Caps Word + Ё | USB/BLE | `ё` остаётся строчной, но режим не завершается | manual pending |
-| Caps Word + exception + A–Z-backed letter | USB/BLE | следующая поддерживаемая буква всё ещё автоматически заглавная | manual pending |
-| Caps Lock + все 33 буквы | USB/BLE | все буквы формируются заглавными через host Caps Lock | manual pending |
-| Custom Russian Caps Word | source audit | отсутствует; следующий change `implement-russian-caps-word` | deferred |
+| Caps Word plus ordinary HID A-Z-backed Russian positions | USB/BLE | corresponding Russian-PC output is automatically uppercase | manual pending |
+| Caps Word plus `RU_HA` | USB/BLE | output remains lowercase, but mode continues | manual pending |
+| Caps Word plus `RU_HARD` | USB/BLE | output remains lowercase, but mode continues | manual pending |
+| Caps Word plus `RU_ZHE` | USB/BLE | output remains lowercase, but mode continues | manual pending |
+| Caps Word plus `RU_E` | USB/BLE | output remains lowercase, but mode continues | manual pending |
+| Caps Word plus `RU_BE` | USB/BLE | output remains lowercase, but mode continues | manual pending |
+| Caps Word plus `RU_YU` | USB/BLE | output remains lowercase, but mode continues | manual pending |
+| Caps Word plus `RU_YO` | USB/BLE | output remains lowercase, but mode continues | manual pending |
+| Caps Word plus exception plus an A-Z-backed position | USB/BLE | the next supported Russian-PC output is still automatically uppercase | manual pending |
+| Caps Lock plus all 33 letters | USB/BLE | host Caps Lock makes all positions produce uppercase output | manual pending |
+| Custom Russian Caps Word | source audit | absent; next change is `implement-russian-caps-word` | deferred |

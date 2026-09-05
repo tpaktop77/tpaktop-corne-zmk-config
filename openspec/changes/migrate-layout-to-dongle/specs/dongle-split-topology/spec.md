@@ -1,53 +1,53 @@
 ## Purpose
 
-Определяет BLE split topology с отдельным центральным донглом и двумя периферийными половинами Corne, сохраняя пять независимых host-профилей.
+Defines a BLE split topology with a dedicated central dongle and two Corne peripheral halves while preserving five independent host profiles.
 
 ## ADDED Requirements
 
-### Requirement: Донгл является единственным central
-Прошивка SHALL использовать отдельный `nice_nano_v2` без клавиш как ZMK split central, а `corne_left` и `corne_right` SHALL работать как BLE peripherals.
+### Requirement: The dongle is the only central
+The firmware SHALL use a keyless `nice_nano_v2` as the ZMK split central, while `corne_left` and `corne_right` SHALL operate as BLE peripherals.
 
-#### Scenario: Нажатие на левой половине
-- **WHEN** пользователь нажимает клавишу на `corne_left`
-- **THEN** позиционное событие передаётся донглу, обрабатывается его keymap и отправляется хосту
+#### Scenario: Press a key on the left half
+- **WHEN** the user presses a key on `corne_left`
+- **THEN** the positional event is forwarded to the dongle, processed by its keymap, and sent to the host
 
-#### Scenario: Нажатие на правой половине
-- **WHEN** пользователь нажимает клавишу на `corne_right`
-- **THEN** позиционное событие передаётся тому же донглу и обрабатывается тем же keymap
+#### Scenario: Press a key on the right half
+- **WHEN** the user presses a key on `corne_right`
+- **THEN** the positional event is forwarded to the same dongle and processed by the same keymap
 
-#### Scenario: Работа без донгла
-- **WHEN** донгл выключен или отсутствует
-- **THEN** половины не отправляют keyboard HID непосредственно хосту
+#### Scenario: Operate without the dongle
+- **WHEN** the dongle is off or absent
+- **THEN** the halves do not send keyboard HID directly to the host
 
-### Requirement: Central принимает две периферии и пять host-профилей
-Central SHALL поддерживать ровно две split peripherals и пять доступных пользователю Bluetooth host profiles `BT0`–`BT4`; connection и pairing limits MUST учитывать обе группы.
+### Requirement: The central accepts two peripherals and five host profiles
+The central SHALL support exactly two split peripherals and five user-facing Bluetooth host profiles `BT0`-`BT4`; connection and pairing limits MUST account for both groups.
 
-#### Scenario: Одновременная split-связь
-- **WHEN** обе половины включены и ранее сопряжены с донглом
-- **THEN** central может одновременно держать соединение с обеими половинами и выбранным хостом
+#### Scenario: Maintain simultaneous split links
+- **WHEN** both previously paired halves are powered on
+- **THEN** the central can simultaneously maintain connections to both halves and the selected host
 
-#### Scenario: Выбор host profile
-- **WHEN** пользователь выбирает `BT0`–`BT4` на System layer
-- **THEN** меняется host profile донгла, а pairing половин с central не заменяется
+#### Scenario: Select a host profile
+- **WHEN** the user selects `BT0`-`BT4` on the System layer
+- **THEN** the dongle host profile changes without replacing the halves' central pairing
 
-### Requirement: Получение заряда peripherals на central отложено
-ZMK v0.3 central MUST NOT включать battery-level fetching или battery proxy для двух peripherals в этом change.
+### Requirement: Peripheral battery retrieval on the central is deferred
+The ZMK v0.3 central MUST NOT enable battery-level fetching or battery proxy for the two peripherals in this change.
 
-#### Scenario: Аудит central-конфигурации
-- **WHEN** проверяется итоговый Kconfig донгла
-- **THEN** fetching и proxy заряда split peripherals отключены
+#### Scenario: Audit central configuration
+- **WHEN** the final dongle Kconfig is inspected
+- **THEN** fetching and proxy for split-peripheral battery levels are disabled
 
-### Requirement: Обе половины используют только Corne 6-column layout
-Peripheral firmware SHALL отключать альтернативный `foostan_corne_5col_layout` и SHALL преобразовывать матричные события через 42-позиционный Corne `default_transform`; правая половина SHALL сохранять `col-offset = 6`.
+### Requirement: Both halves use only the Corne 6-column layout
+Peripheral firmware SHALL disable the alternative `foostan_corne_5col_layout` and SHALL transform matrix events with the 42-position Corne `default_transform`; the right half SHALL retain `col-offset = 6`.
 
-#### Scenario: Правый home row
-- **WHEN** пользователь нажимает пять буквенных клавиш правого home row от центра к краю на Graphite
-- **THEN** central получает позиции 18–22 и выводит `YHAEI`, а не 5-column позиции 15–19 (`TSGYH`)
+#### Scenario: Right home row
+- **WHEN** the user presses the five right-home-row letter keys from inner to outer on Graphite
+- **THEN** the central receives positions 18-22 and outputs `YHAEI`, not 5-column positions 15-19 (`TSGYH`)
 
-#### Scenario: Positional combo после фикса
-- **WHEN** пользователь нажимает физические позиции 19+20+21 на правом home row
-- **THEN** central распознаёт Enter combo по исходным 42-позиционным номерам
+#### Scenario: Positional combo after the fix
+- **WHEN** the user presses physical positions 19+20+21 on the right home row
+- **THEN** the central recognizes the Enter combo using the original 42-position indices
 
-#### Scenario: Установка исправления
-- **WHEN** обе половины уже связаны с тем же dongle central
-- **THEN** пользователь может установить исправление перепрошивкой left/right peripheral UF2 без settings reset и без перепрошивки донгла
+#### Scenario: Install the fix
+- **WHEN** both halves are already paired with the same dongle central
+- **THEN** the user can install the fix by reflashing left/right peripheral UF2 files without a settings reset or dongle reflash

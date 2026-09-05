@@ -1,101 +1,108 @@
 ## Context
 
-Целевой `tpaktop-corne-zmk-config` имеет единственный initial commit `d286351`: стандартный трёхслойный keymap, ZMK v0.3 и build matrix двух Corne-половин. Несмотря на название репозитория, matrix уже содержит `nice_view_adapter nice_view`; пользователь решил сохранить дисплеи, но оставить на них только локальный battery/charging и split connection status.
+The target `tpaktop-corne-zmk-config` started at commit `d286351` with a standard three-layer keymap, ZMK v0.3, and a two-half Corne build matrix. Despite the repository name, the matrix already included `nice_view_adapter nice_view`; the displays are retained but limited to local battery/charging and split connection status.
 
-Проверенная конфигурация находится в read-only `tpaktop-corne-wireless-view-zmk-config` на `master` commit `e7d7c10`; открытых PR в исходном и целевом репозиториях перед началом change нет. Она содержит 15 слоёв, positional combo, русский блок, Auto Shift 300 ms, volatile OS profile и корневой out-of-tree module. Этот commit используется как baseline целиком, а не как набор выборочных фрагментов.
+The tested configuration is in read-only `tpaktop-corne-wireless-view-zmk-config` at `master` commit `e7d7c10`. Before this change, neither the source nor target repository had open pull requests. The source contains 15 layers, positional combos, Russian layers, 300 ms Auto Shift, a volatile OS profile, and a root out-of-tree module. That commit is used as a complete baseline rather than as selected fragments.
 
-Официальный ZMK v0.3 dongle mechanism требует central shield с mock kscan, matrix transform и physical layout. Обе реальные половины становятся BLE peripherals. ZMK Studio и все keymap-dependent behaviors должны выполняться на central.
+The official ZMK v0.3 dongle mechanism requires a central shield with mock kscan, a matrix transform, and a physical layout. Both physical halves become BLE peripherals. ZMK Studio and all keymap-dependent behaviors must execute on the central.
 
 ## Goals / Non-Goals
 
 **Goals:**
 
-- Изолировать донгловую архитектуру в отдельном репозитории и сохранить рабочий view-репозиторий как rollback.
-- Получить четыре проверяемых UF2: dongle, left, right и settings reset.
-- Сохранить функциональную идентичность keymap при смене split topology.
-- Использовать штатные механизмы ZMK v0.3 для dongle, Studio и peripheral display.
+- Isolate the dongle architecture in a separate repository while retaining the working view repository as a rollback path.
+- Produce four verifiable UF2 files: dongle, left, right, and settings reset.
+- Preserve keymap behavior while changing split topology.
+- Use standard ZMK v0.3 mechanisms for the dongle, Studio, and peripheral display.
 
 **Non-Goals:**
 
-- Проприетарный 2.4 GHz transport, работа половин без донгла или runtime-переключение topology.
-- Экран на донгле, передача active layer/OS/host profile на половины и собственный display widget.
-- Получение или proxy уровня батарей peripherals на central.
-- Исправление перекрывающихся combo, Russian Caps Word или иное изменение текущей раскладки.
-- Изменение исходного view-репозитория, `nat-corne-zmk-config` или QMK/Oryx.
+- Proprietary 2.4 GHz transport, operation without the dongle, or runtime topology switching.
+- A dongle screen, forwarding active layer/OS/host profile to the halves, or a custom display widget.
+- Peripheral battery fetching or proxy on the central.
+- Fixing overlapping combos, Russian Caps Word, or otherwise changing the current layout.
+- Modifying the source view repository, `nat-corne-zmk-config`, or QMK/Oryx.
 
 ## Decisions
 
-### 1. `nice_nano_v2` используется и как dongle board
+### 1. Use `nice_nano_v2` as the dongle board
 
-Создаётся shield `tpaktop_corne_dongle` в `config/boards/shields/tpaktop_corne`. Он включает `ZMK_SPLIT_ROLE_CENTRAL=y`, две peripherals и лимиты `BT_MAX_CONN=7`, `BT_MAX_PAIRED=7`: две служебные split-связи плюс пять host profiles. Имя клавиатуры укладывается в лимит 16 символов.
+The `tpaktop_corne_dongle` shield is created under `config/boards/shields/tpaktop_corne`. It enables `ZMK_SPLIT_ROLE_CENTRAL=y`, two peripherals, and `BT_MAX_CONN=7`/`BT_MAX_PAIRED=7`: two split links plus five host profiles. The keyboard name remains within the 16-character limit.
 
-Альтернатива — отдельная XIAO/Prospector board — не выбрана, поскольку пользователь не указал другое устройство, а `nice_nano_v2` уже является аппаратной базой проекта и поддерживается ZMK v0.3.
+A separate XIAO or Prospector board was not selected because no other dongle hardware was specified and `nice_nano_v2` is already the project's supported hardware base in ZMK v0.3.
 
-### 2. Dongle shield повторяет Corne 6-column topology
+### 2. Mirror the Corne 6-column topology in the dongle shield
 
-Overlay использует mock kscan без клавиш, точную 12×4 `default_transform` карту на 42 позиции из in-tree Corne v0.3 и shared physical layout `foostan_corne_6col_layout`. Это сохраняет номера positional combo и даёт Studio полный physical layout.
+The overlay uses a keyless mock kscan, the exact 12x4 `default_transform` map for 42 positions from the in-tree ZMK v0.3 Corne definition, and the shared `foostan_corne_6col_layout` physical layout. This preserves positional combo indices and gives Studio the complete physical layout.
 
-Для выбора общего keymap добавляется `config/tpaktop_corne_dongle.keymap`, включающий version-controlled `corne.keymap`. Отдельная копия 818-строчного keymap не создаётся.
+`config/tpaktop_corne_dongle.keymap` includes the version-controlled `corne.keymap`. A second copy of the 818-line keymap is not created.
 
-### 3. Keymap переносится как baseline, topology-настройки отделяются
+### 3. Migrate the keymap as a baseline and separate topology settings
 
-Корневые `CMakeLists.txt`, `Kconfig`, `zephyr/module.yml`, `dts/`, `include/`, `src/`, `config/corne.keymap`, `config/west.yml` и пользовательская документация копируются из `e7d7c10`. Старые OpenSpec change directories не копируются как активная история нового репозитория; provenance и требования переноса фиксирует текущий change.
+Root `CMakeLists.txt`, `Kconfig`, `zephyr/module.yml`, `dts/`, `include/`, `src/`, `config/corne.keymap`, `config/west.yml`, and user documentation are copied from `e7d7c10`. Older OpenSpec change directories are not copied as active history; the current change records provenance and migration requirements.
 
-`config/corne.conf` становится конфигурацией peripherals: radio/debounce плюс built-in nice!view status. Studio удаляется из неё. `config/tpaktop_corne_dongle.conf` содержит radio и Studio settings для central. Существующий CMake guard уже компилирует OS behavior sources только на central.
+`config/corne.conf` becomes peripheral configuration containing radio/debounce and built-in nice!view status settings. Studio is removed from it. `config/tpaktop_corne_dongle.conf` contains central radio and Studio settings. The existing CMake guard already compiles OS behavior sources only for the central.
 
-### 4. Для nice!view используется built-in status screen
+### 4. Use the built-in nice!view status screen
 
-Shields `nice_view_adapter nice_view` остаются у left/right targets. Выбирается `CONFIG_ZMK_DISPLAY_STATUS_SCREEN_BUILT_IN=y` и процентный battery widget. На peripheral Kconfig-зависимости ZMK v0.3 исключают layer/output/WPM widgets и включают battery плюс peripheral connection widgets; custom nice!view art code не используется.
+The `nice_view_adapter nice_view` shields remain on left and right targets. `CONFIG_ZMK_DISPLAY_STATUS_SCREEN_BUILT_IN=y` and the percentage battery widget are selected. On a peripheral, ZMK v0.3 Kconfig dependencies omit layer/output/WPM widgets and include battery plus peripheral connection widgets; no custom nice!view artwork is used.
 
-Shield nice!view в ZMK v0.3 уже выбирает `ZMK_DISPLAY_WORK_QUEUE_DEDICATED` по умолчанию. После проверки upstream Kconfig и display implementation настройка также задаётся явно в `config/corne.conf`, чтобы LVGL updates гарантированно шли через отдельную `k_work_q` и выбор не зависел от будущего изменения shield defaults.
+The ZMK v0.3 nice!view shield already selects `ZMK_DISPLAY_WORK_QUEUE_DEDICATED` by default. After checking upstream Kconfig and display implementation, the option is also set explicitly in `config/corne.conf` so LVGL updates always use a dedicated `k_work_q` and do not depend on future shield defaults.
 
-Собственный widget отклонён: он дублировал бы штатный код и создавал обязательство сопровождения без дополнительной пользовательской ценности.
+A custom widget was rejected because it would duplicate upstream code and add maintenance without user value.
 
-### 5. Studio переносится на headless central
+### 5. Move Studio to the headless central
 
-Snippet `studio-rpc-usb-uart` назначается только dongle target. Physical layout из решения 2 обеспечивает Studio mapping; три reserved layer остаются в перенесённом keymap. Peripheral targets не получают Studio snippet и не являются USB Studio endpoints.
+The `studio-rpc-usb-uart` snippet is assigned only to the dongle target. The physical layout from decision 2 provides Studio mapping; the three reserved layers remain in the migrated keymap. Peripheral targets do not receive the Studio snippet and are not USB Studio endpoints.
 
-### 6. Build matrix формирует полный install set
+### 6. Build a complete installation set
 
-Matrix содержит:
+The matrix contains:
 
 1. `nice_nano_v2 + tpaktop_corne_dongle + studio-rpc-usb-uart`;
-2. `nice_nano_v2 + corne_left + nice_view_adapter + nice_view` с принудительным peripheral role;
-3. аналогичный `corne_right` target;
+2. `nice_nano_v2 + corne_left + nice_view_adapter + nice_view` with a forced peripheral role;
+3. the equivalent `corne_right` target;
 4. `nice_nano_v2 + settings_reset`.
 
-Каждому target задаётся стабильное `artifact-name`. Battery fetching/proxy на dongle намеренно не включается из-за известных рисков ZMK v0.3 с двумя peripherals.
+Each target has a stable `artifact-name`. Dongle battery fetching/proxy remains disabled because of known ZMK v0.3 risks with two peripherals.
 
-### 7. Timestamp передаётся штатному reusable workflow
+### 7. Pass the timestamp to the official reusable workflow
 
-Отдельный metadata job формирует UTC `YYYYMMDD_HHMM` и экспортирует output. Reusable `build-user-config.yml@v0.3` вызывается с `archive_name: corne-dongle-firmware_<timestamp>`. Это использует официальный input workflow и не требует копировать или форкать upstream workflow. Внутренние UF2 сохраняют стабильные имена.
+A metadata job generates UTC `YYYYMMDD_HHMM` and exports it as an output. The official `build-user-config.yml@v0.3` reusable workflow receives `archive_name: corne-dongle-firmware_<timestamp>`. This avoids copying or forking the upstream workflow. UF2 filenames inside the archive remain stable.
 
-### 8. Документация разделяет автоматическую и аппаратную проверку
+### 8. Separate automated and hardware validation in documentation
 
-Документы исходной раскладки переносятся и получают явную provenance/topology секцию. Новый dongle guide описывает reset, mapping UF2, first pairing и rollback. Test matrix сохраняет прежние manual pending строки и добавляет три устройства, минимальные экраны, Studio на dongle, cross-half combo, USB/BLE и provisioning.
+The source layout documents gain explicit provenance and topology sections. A new dongle guide covers reset, UF2 mapping, first pairing, and rollback. The test matrix retains existing `manual pending` rows and adds the three devices, minimal screens, Studio on the dongle, cross-half combos, USB/BLE, and provisioning.
 
-### 9. Peripheral firmware жёстко фиксирует Corne 6 Column
+### 9. Force Corne 6 Column on peripheral firmware
 
-Аппаратный тест 2026-09-05 после полного settings reset выявил систематическое использование `five_column_transform` обеими половинами: правый home row выдал `TSGYH` вместо `YHAEI`, то есть позиции 15–19 вместо 18–22; левая половина показала соответствующее смещение и попадание внешней клавиши в служебную позицию. Исходный `master` целевого репозитория содержит 42 bindings на слой, поэтому это не 5×3 template. Повторный reset с полной загрузкой reset firmware результат не изменил.
+Hardware testing on 2026-09-05 after a complete settings reset showed both halves consistently using `five_column_transform`: the right home row produced `TSGYH` instead of `YHAEI`, corresponding to positions 15-19 instead of 18-22; the left half showed the matching shift and mapped an outer key to a service position. The target repository's original `master` has 42 bindings per layer, so it is not a 5x3 template. A second complete reset did not change the result.
 
-Дополнительный shield `tpaktop_corne_6col`, включаемый после `corne_left`/`corne_right`, переводит `foostan_corne_5col_layout` в `status = "disabled"`. Обычный user-config overlay был отклонён фактической CI-проверкой: ZMK подключает его раньше in-tree Corne overlay, когда label ещё не определён. Extension shield обеспечивает правильный порядок, а единственным доступным peripheral physical layout остаётся `foostan_corne_6col_layout` с прежними `default_transform` и правым `col-offset = 6`. Dongle overlay и version-controlled keymap не меняются. Роли и BLE bonds также не меняются, поэтому для установки исправления достаточно перепрошить обе половины без settings reset.
+The `tpaktop_corne_6col` extension shield, applied after `corne_left` or `corne_right`, sets `foostan_corne_5col_layout` to `status = "disabled"`. A regular user-config overlay was rejected by an actual CI build because ZMK loads it before the in-tree Corne overlay, when that label is not yet defined. The extension shield supplies the required order, leaving `foostan_corne_6col_layout` as the only enabled peripheral physical layout with the existing `default_transform` and right-side `col-offset = 6`. The dongle overlay and version-controlled keymap are unchanged. Device roles and BLE bonds are unchanged, so installing the fix requires reflashing only the two halves without a settings reset.
+
+### 10. Keep repository text in English
+
+All tracked prose, documentation, OpenSpec artifacts, and source comments use English and contain no Cyrillic code points. Russian layout diagrams and expected outputs use Russian-PC alias names or Latin descriptions instead of literal Cyrillic glyphs. Firmware bindings and the host-layout-dependent Russian behavior are unchanged.
+
+This repository-wide policy is preferred over leaving bilingual fragments because it makes review and future maintenance consistent. It is enforced with a full-tree Cyrillic-range search before merge.
 
 ## Risks / Trade-offs
 
-- [Неизвестная фактическая плата донгла отличается от `nice_nano_v2`] → board выделен одной строкой matrix и документирован как принятое аппаратное предположение; смена board не затрагивает keymap/topology specs.
-- [Старые bonds мешают обнаружению двух peripherals] → обязательный `settings_reset` включён в artifact и выполняется на всех трёх устройствах.
-- [Одна из половин не подключается при старте] → battery fetching/proxy отключены, display queue явно выделена; test matrix отдельно проверяет cold boot, reconnection и обе стороны.
-- [Positional combo меняются при переносе] → dongle transform дословно совпадает с Corne 6-column v0.3, keymap копируется из фиксированного commit, добавляется структурная проверка 42 bindings на слой.
-- [Peripheral выбирает альтернативный in-tree Corne 5-column layout] → 5-column physical layout явно отключён extension shield `tpaktop_corne_6col`; compiled Devicetree обеих половин проверяется на единственный enabled 6-column layout.
-- [Peripheral display неожиданно показывает art/layer] → сборочная конфигурация принудительно выбирает built-in screen; итоговый Kconfig проверяется в Actions.
-- [Донгл потерян или неисправен] → половины намеренно не работают автономно; неизменённый view-репозиторий и документированный reset дают rollback.
-- [Timestamp совпадает у редких параллельных запусков в одну минуту] → GitHub хранит artifacts по run, а имя удовлетворяет задаче различения повседневных сборок; run ID не добавляется ради читаемости.
+- [The actual dongle board differs from `nice_nano_v2`] -> The board is isolated to one matrix entry and documented as the accepted hardware assumption; changing it does not affect keymap or topology specs.
+- [Old bonds prevent discovery of both peripherals] -> `settings_reset` is included in the artifact and run on all three devices during initial installation.
+- [One half fails to connect at startup] -> Battery fetching/proxy is disabled, the display queue is explicitly dedicated, and the test matrix covers cold boot, reconnection, and both sides.
+- [Positional combos change during migration] -> The dongle transform exactly matches the ZMK v0.3 Corne 6-column transform, the keymap comes from a pinned commit, and every layer is structurally checked for 42 bindings.
+- [A peripheral selects the alternative in-tree Corne 5-column layout] -> The `tpaktop_corne_6col` extension shield explicitly disables it; both compiled Devicetrees are checked for a single enabled 6-column layout.
+- [A peripheral display unexpectedly shows artwork or layer state] -> Build configuration forces the built-in screen and final Kconfig is inspected in Actions.
+- [The dongle is lost or fails] -> The halves intentionally do not work independently; the unchanged view repository and documented reset procedure provide rollback.
+- [Rare concurrent runs share a minute-level timestamp] -> GitHub separates artifacts by run and the readable timestamp satisfies everyday identification; a run ID is not added to the name.
+- [Literal Russian examples become less immediately readable] -> Stable Russian-PC aliases and Latin key names preserve exact mappings without violating the English-only text policy.
 
 ## Migration Plan
 
-1. Собрать и скачать датированный artifact, проверить наличие четырёх UF2.
-2. По очереди прошить `settings-reset-nice-nano-v2.uf2` на dongle, left и right и дать каждому загрузиться.
-3. Прошить `tpaktop-corne-dongle.uf2`, `corne-left-peripheral.uf2`, `corne-right-peripheral.uf2` на соответствующие устройства.
-4. Сначала включить/подключить dongle, затем обе половины; проверить connection indicators.
-5. Выполнить USB smoke tests, ZMK Studio test, затем pairing BT0 и BLE smoke tests; остальные host profiles проверять независимо.
-6. При rollback повторить settings reset на половинах и прошить left/right artifacts из стабильного view-репозитория.
+1. Build and download the timestamped artifact; verify all four UF2 files.
+2. Flash `settings-reset-nice-nano-v2.uf2` to the dongle, left, and right devices in turn and allow each image to boot.
+3. Flash `tpaktop-corne-dongle.uf2`, `corne-left-peripheral.uf2`, and `corne-right-peripheral.uf2` to their corresponding devices.
+4. Start or connect the dongle first, then both halves; check connection indicators.
+5. Run USB smoke tests and a ZMK Studio test, then pair BT0 and run BLE smoke tests; validate remaining host profiles independently.
+6. For rollback, reset settings on both halves and flash left/right artifacts from the stable view repository.

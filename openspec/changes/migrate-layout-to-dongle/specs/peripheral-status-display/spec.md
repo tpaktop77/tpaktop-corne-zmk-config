@@ -1,38 +1,38 @@
 ## Purpose
 
-Сохраняет полезный минимальный nice!view-индикатор на каждой беспроводной половине без передачи слоя или декоративного интерфейса с central.
+Preserves a useful minimal nice!view indicator on each wireless half without forwarding layer state or decorative UI from the central.
 
 ## ADDED Requirements
 
-### Requirement: Обе половины собираются с nice!view
-Прошивки `corne_left` и `corne_right` SHALL включать shields `nice_view_adapter` и `nice_view`, а донгл SHALL собираться без display shield.
+### Requirement: Both halves build with nice!view
+The `corne_left` and `corne_right` firmware SHALL include the `nice_view_adapter` and `nice_view` shields, while the dongle SHALL build without a display shield.
 
-#### Scenario: Состав build matrix
-- **WHEN** запускается firmware workflow
-- **THEN** оба peripheral targets включают nice!view, а dongle target является headless
+#### Scenario: Inspect build matrix
+- **WHEN** the firmware workflow starts
+- **THEN** both peripheral targets include nice!view and the dongle target is headless
 
-### Requirement: Peripheral использует встроенный минимальный status screen
-Каждая половина SHALL показывать собственный уровень заряда, признак USB-зарядки и состояние split-соединения с донглом через built-in ZMK status screen. Display updates MUST явно использовать dedicated ZMK work queue, а не системную очередь обработки.
+### Requirement: A peripheral uses the built-in minimal status screen
+Each half SHALL show its own battery level, USB charging indicator, and split connection state using the built-in ZMK status screen. Display updates MUST explicitly use the dedicated ZMK work queue rather than the system work queue.
 
-#### Scenario: Половина подключена
-- **WHEN** peripheral установила split-соединение с донглом
-- **THEN** её nice!view показывает локальный заряд и connected status
+#### Scenario: Half is connected
+- **WHEN** a peripheral establishes its split connection to the dongle
+- **THEN** its nice!view shows local battery level and connected status
 
-#### Scenario: Половина отключена
-- **WHEN** peripheral потеряла split-соединение
-- **THEN** nice!view сохраняет локальный заряд и показывает disconnected status
+#### Scenario: Half is disconnected
+- **WHEN** a peripheral loses its split connection to the dongle
+- **THEN** its nice!view retains local battery information and shows disconnected status
 
-#### Scenario: Половина получает USB-питание
-- **WHEN** peripheral подключена к USB для зарядки
-- **THEN** nice!view показывает признак зарядки
+#### Scenario: Half receives USB power
+- **WHEN** a peripheral is connected to USB for charging
+- **THEN** its nice!view shows the charging indicator
 
-#### Scenario: Отрисовка экрана
-- **WHEN** nice!view обновляет battery или connection status
-- **THEN** LVGL update выполняется через явно выбранный dedicated display work queue
+#### Scenario: Render the display
+- **WHEN** nice!view updates battery or connection status
+- **THEN** the LVGL update runs through the explicitly selected dedicated display work queue
 
-### Requirement: Лишнее состояние не отображается
-Peripheral status screen MUST NOT показывать активный keymap layer, OS profile, host Bluetooth profile или декоративную картинку стандартного nice!view custom widget.
+### Requirement: Unnecessary state is not displayed
+The peripheral status screen MUST NOT show the active keymap layer, OS profile, host Bluetooth profile, or decorative artwork from the standard nice!view custom widget.
 
-#### Scenario: Смена слоя на central
-- **WHEN** пользователь меняет активный слой через донгл
-- **THEN** содержимое peripheral status screen не пытается отобразить название слоя
+#### Scenario: Change the layer on the central
+- **WHEN** the user changes the active layer through the dongle
+- **THEN** the peripheral status screen does not attempt to show the layer name

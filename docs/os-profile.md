@@ -1,21 +1,21 @@
 # OS profile
 
-OS profile — независимое внутреннее состояние custom ZMK behavior module. В донгловой topology модуль выполняется на `nice_nano_v2` central; половины передают ему только физические позиции. Это не keymap layer и не Bluetooth profile.
+The OS profile is independent internal state in the custom ZMK behavior module. In dongle topology, the module runs on the `nice_nano_v2` central; the halves forward only physical positions. It is neither a keymap layer nor a Bluetooth profile.
 
-## Свойства состояния
+## State properties
 
-- Допустимые значения: `OS_WINDOWS`, `OS_MACOS`, `OS_LINUX`.
-- Начальное значение после каждого reboot: `OS_WINDOWS`.
-- Состояние живёт только в RAM и не сохраняется во flash.
-- Нет автоматического определения ОС.
-- Нет отдельных Graphite/QWERTY вариантов для ОС.
-- Нет связи OS profile с BT0–BT4 или текущим USB/BLE endpoint.
-- Переключение Graphite/QWERTY не меняет OS profile.
-- Переключение Graphite/Russian и языка хоста не меняет OS profile.
+- Allowed values: `OS_WINDOWS`, `OS_MACOS`, and `OS_LINUX`.
+- Initial value after every reboot: `OS_WINDOWS`.
+- State exists only in RAM and is not persisted to flash.
+- There is no automatic OS detection.
+- There are no separate Graphite or QWERTY variants for each OS.
+- The OS profile is not linked to `BT0`-`BT4` or the current USB/BLE endpoint.
+- Switching Graphite/QWERTY does not change the OS profile.
+- Switching Graphite/Russian or changing the host language does not change the OS profile.
 
 ## Behavior API
 
-Именованные значения экспортируются из repo-local dt-binding header.
+Named values are exported by a repository-local devicetree binding header.
 
 ```dts
 &os_set OS_WINDOWS
@@ -26,13 +26,13 @@ OS profile — независимое внутреннее состояние cu
 &os_action OS_ACTION_PASTE
 ```
 
-`&os_set` меняет профиль на press и не генерирует HID event. `&os_action` при press выбирает HID keycode из централизованной таблицы и делегирует press штатному ZMK `&kp`; при release делегирует release того же keycode.
+`&os_set` changes the profile on press and generates no HID event. On press, `&os_action` selects a HID keycode from the centralized table and delegates the press to standard ZMK `&kp`; on release, it delegates release of the same keycode.
 
-Выбранный keycode хранится до release. Поэтому даже искусственная смена OS profile между press и release не может переключить release на другой modifier и оставить старый зажатым.
+The selected keycode is retained until release. Even an artificial OS-profile change between press and release therefore cannot release a different modifier and leave the original modifier stuck.
 
-## Таблица действий
+## Action table
 
-| Значение | Windows | macOS | Linux |
+| Value | Windows | macOS | Linux |
 |---|---|---|---|
 | `OS_ACTION_COPY` | Ctrl+C | GUI+C | Ctrl+Insert |
 | `OS_ACTION_PASTE` | Ctrl+V | GUI+V | Shift+Insert |
@@ -50,11 +50,11 @@ OS profile — независимое внутреннее состояние cu
 
 ## macOS Voice
 
-Для macOS выбран официальный ZMK keycode `C_VOICE_COMMAND`, то есть HID Consumer Voice Command usage `0xCF`. Он совпадает с исходным QMK вызовом `host_consumer_send(0xCF)`. Официальная таблица совместимости ZMK не гарантирует одинаковую реакцию всех версий macOS, поэтому Siri/voice остаётся обязательным аппаратным тестом.
+macOS uses the official ZMK keycode `C_VOICE_COMMAND`, corresponding to HID Consumer Voice Command usage `0xCF`. This matches the original QMK call `host_consumer_send(0xCF)`. ZMK's official compatibility table does not guarantee identical behavior across all macOS versions, so Siri or voice activation remains a required hardware test.
 
 ## System layer selectors
 
-На System positions `19`, `20`, `21` находятся:
+System positions `19`, `20`, and `21` contain:
 
 ```text
 &os_set OS_WINDOWS
@@ -62,32 +62,32 @@ OS profile — независимое внутреннее состояние cu
 &os_set OS_LINUX
 ```
 
-Это три соседние клавиши правого home row; position `18` остаётся пустой, а Windows на position `19` находится под указательным пальцем. Behavior работает на dongle central и не меняет active keymap layer.
+These are three adjacent keys on the right home row. Position `18` remains empty, placing Windows at position `19` under the index finger. The behavior runs on the dongle central and does not change the active keymap layer.
 
-## Независимое переключение языка
+## Independent host-language switching
 
-OS profile, Bluetooth profile и язык — три независимых механизма:
+The OS profile, Bluetooth profile, and language are three independent mechanisms:
 
-- `&os_set` меняет только внутренний Windows/macOS/Linux profile;
-- `&bt BT_SEL` меняет только Bluetooth profile;
-- `to_russian`/`to_english` отправляют shortcut языка хосту и меняют только base layer `RUSSIAN`/`GRAPHITE`.
+- `&os_set` changes only the internal Windows/macOS/Linux profile;
+- `&bt BT_SEL` changes only the Bluetooth profile;
+- `to_russian` and `to_english` send a host-language shortcut and change only the `RUSSIAN` or `GRAPHITE` base layer.
 
-Language macro не выбирает OS profile и не зависит от него. На каждом Windows/macOS/Linux хосте пользователь должен настроить `Ctrl+Shift+1` как прямой выбор English и `Ctrl+Shift+2` как прямой выбор Russian–PC. На macOS это может быть реализовано через Hammerspoon, как в QMK/Oryx source; на Windows и Linux — через доступные системные настройки или утилиты прямого выбора раскладки.
+The language macro neither selects nor depends on the OS profile. On each Windows, macOS, or Linux host, the user must configure `Ctrl+Shift+1` as direct selection of English and `Ctrl+Shift+2` as direct selection of Russian-PC. On macOS this can use Hammerspoon as in the QMK/Oryx source; Windows and Linux can use available system settings or a direct-layout selection utility.
 
-| Хост | Требуемая подготовка | Проверка до теста keymap |
+| Host | Required preparation | Check before keymap testing |
 |---|---|---|
-| Windows | сохранить текущую настройку/утилиту, где `Ctrl+Shift+1` выбирает English, а `Ctrl+Shift+2` Russian–PC | нажать оба shortcut с обычной клавиатуры и проверить прямой, не циклический выбор |
-| macOS | сохранить Hammerspoon bindings из рабочего Voyager setup для U.S. и Russian–PC | проверить прямой выбор обоих input source |
-| Linux | назначить два прямых shortcut средствами desktop/WM или вспомогательной утилиты | проверить, что shortcuts выбирают конкретную раскладку, а не следующую по кругу |
+| Windows | retain the current setting or utility where `Ctrl+Shift+1` selects English and `Ctrl+Shift+2` selects Russian-PC | press both shortcuts on a regular keyboard and verify direct rather than cyclic selection |
+| macOS | retain the Hammerspoon bindings from the working Voyager setup for U.S. and Russian-PC | verify direct selection of both input sources |
+| Linux | assign two direct shortcuts through the desktop environment, window manager, or helper utility | verify that each shortcut selects a specific layout rather than the next layout in a cycle |
 
-Прошивка не определяет активный язык хоста, не сохраняет его во flash и не связывает его с BT0–BT4. После reboot прошивка начинает с Graphite и Windows OS profile, но фактический язык хоста может отличаться до первого направленного `to_russian` или `to_english`.
+The firmware does not detect the active host language, persist it to flash, or link it to `BT0`-`BT4`. After reboot, the firmware starts with Graphite and the Windows OS profile, but the actual host language can differ until the first directed `to_russian` or `to_english` action.
 
-## Ограничения текущего этапа
+## Current-stage limitations
 
-- Профиль не переживает reboot.
-- Профиль не определяется хостом автоматически.
-- Профиль не выбирается вместе с Bluetooth profile.
-- Язык и русский слой не выбираются вместе с OS или Bluetooth profile.
-- Автоматической синхронизации после внешней смены языка хоста нет.
-- Navigation layer пока не использует `&os_action`: `migrated, OS adaptation deferred`.
-- Только перечисленные combo используют OS-aware API.
+- The profile does not survive reboot.
+- The host does not automatically provide the profile.
+- The profile is not selected together with a Bluetooth profile.
+- The language and Russian layer are not selected with an OS or Bluetooth profile.
+- There is no automatic resynchronization after the host language is changed externally.
+- The Navigation layer does not yet use `&os_action`: `migrated, OS adaptation deferred`.
+- Only the listed combos use the OS-aware API.

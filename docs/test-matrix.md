@@ -18,6 +18,7 @@
 | Named layer refs | `rg` audit | нет необъяснимых layer numbers | pass | перенесённый keymap побайтно совпадает с source baseline |
 | Layer priority | structural audit | `GRAPHITE 0`, `QWERTY 1`, `RUSSIAN 2`; overlay выше base; node order совпадает с defines | pass | 15 named defines и прежний проверенный node order сохранены |
 | Dongle transform | token comparison с in-tree Corne v0.3 | те же 42 `RC(row,col)` в том же порядке | pass | 42/42 tokens exact match |
+| Peripheral physical layout | compiled Devicetree обеих половин | `5 Column` disabled; `6 Column` использует 42-позиционный `default_transform`; left без offset, right с `col-offset = 6` | pass | [left job 101220172228](https://github.com/tpaktop77/tpaktop-corne-zmk-config/actions/runs/33934665598/job/101220172228), [right job 101220172360](https://github.com/tpaktop77/tpaktop-corne-zmk-config/actions/runs/33934665598/job/101220172360) |
 | YAML syntax | Node `yaml` parser | `build.yaml` и workflow разбираются без ошибок | pass | обе YAML структуры parsed |
 | Exclusions | `rg` audit | нет battery proxy/fetching, layout behavior changes или Studio snippet на peripherals | pass | fetching/proxy явно `n`; один Studio snippet только у dongle |
 | Display queue | Kconfig audit | built-in nice!view updates выполняются через dedicated queue | pass | `CONFIG_ZMK_DISPLAY_WORK_QUEUE_DEDICATED=y`, system queue не выбран |
@@ -26,11 +27,11 @@
 
 | Конфигурация | Ожидаемый результат | Статус | Evidence |
 |---|---|---|---|
-| `nice_nano_v2 + tpaktop_corne_dongle + studio-rpc-usb-uart` | успешная central UF2 сборка | pass | [job 101170224503](https://github.com/tpaktop77/tpaktop-corne-zmk-config/actions/runs/33918196591/job/101170224503) |
-| `nice_nano_v2 + corne_left + tpaktop_corne_6col + nice_view_adapter + nice_view`, peripheral role | успешная left UF2 сборка | retest pending | extension shield CI |
-| `nice_nano_v2 + corne_right + tpaktop_corne_6col + nice_view_adapter + nice_view`, peripheral role | успешная right UF2 сборка | retest pending | extension shield CI |
-| `nice_nano_v2 + settings_reset` | успешная reset UF2 сборка | pass | [job 101170226136](https://github.com/tpaktop77/tpaktop-corne-zmk-config/actions/runs/33918196591/job/101170226136) |
-| merged artifact | четыре однозначно названных UF2 в `corne-dongle-firmware_YYYYMMDD_HHMM.zip` | pass | [run 33918196591](https://github.com/tpaktop77/tpaktop-corne-zmk-config/actions/runs/33918196591), artifact `corne-dongle-firmware_20260904_2050`, SHA-256 `a5bcc39b0845b2e3e6256d63592c4e155e9beb343cb0dac7db98b9905e535b83` |
+| `nice_nano_v2 + tpaktop_corne_dongle + studio-rpc-usb-uart` | успешная central UF2 сборка | pass | [job 101220172259](https://github.com/tpaktop77/tpaktop-corne-zmk-config/actions/runs/33934665598/job/101220172259) |
+| `nice_nano_v2 + corne_left + tpaktop_corne_6col + nice_view_adapter + nice_view`, peripheral role | успешная left UF2 сборка | pass | [job 101220172228](https://github.com/tpaktop77/tpaktop-corne-zmk-config/actions/runs/33934665598/job/101220172228) |
+| `nice_nano_v2 + corne_right + tpaktop_corne_6col + nice_view_adapter + nice_view`, peripheral role | успешная right UF2 сборка | pass | [job 101220172360](https://github.com/tpaktop77/tpaktop-corne-zmk-config/actions/runs/33934665598/job/101220172360) |
+| `nice_nano_v2 + settings_reset` | успешная reset UF2 сборка | pass | [job 101220172257](https://github.com/tpaktop77/tpaktop-corne-zmk-config/actions/runs/33934665598/job/101220172257) |
+| merged artifact | четыре однозначно названных UF2 в `corne-dongle-firmware_YYYYMMDD_HHMM.zip` | pass | [run 33934665598](https://github.com/tpaktop77/tpaktop-corne-zmk-config/actions/runs/33934665598), artifact `corne-dongle-firmware_20260905_0057`, SHA-256 `2024d0fbeb8b498e8dee1e5655a09e8d490e47e38834e2a548a1d33380853e9f` |
 
 ## Layout и переключение
 
@@ -256,7 +257,7 @@ PR #5 собирался успешно, но аппаратно `RUSSIAN = 9` �
 | USB endpoint | ввод обеих половин приходит через подключённый USB-донгл | manual pending |
 | BLE endpoint | хост paired с донглом; ввод обеих половин приходит через выбранный `BT0`–`BT4` | manual pending |
 | пять host profiles | BT0–BT4 выбираются независимо и не вытесняют split bonds | manual pending |
-| timestamp | имя скачанного архива соответствует `corne-dongle-firmware_YYYYMMDD_HHMM.zip` в UTC | pass: `corne-dongle-firmware_20260904_2050` |
+| timestamp | имя скачанного архива соответствует `corne-dongle-firmware_YYYYMMDD_HHMM.zip` в UTC | pass: `corne-dongle-firmware_20260905_0057` |
 | stable filenames | архив содержит dongle, left, right и settings-reset UF2 с документированными именами | pass: `tpaktop-corne-dongle.uf2`, `corne-left-peripheral.uf2`, `corne-right-peripheral.uf2`, `settings-reset-nice-nano-v2.uf2` |
 | rollback | после повторного reset прежняя view firmware восстанавливает central-left topology | manual pending |
 

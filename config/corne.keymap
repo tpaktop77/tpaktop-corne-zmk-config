@@ -21,10 +21,11 @@
 #define SMILES 8
 #define RUSSIAN_SYMBOLS 9
 #define RUSSIAN_SMILES 10
-#define SYSTEM_BT 11
-#define STUDIO_EXTRA_1 12
-#define STUDIO_EXTRA_2 13
-#define STUDIO_EXTRA_3 14
+#define SYM_NUM 11
+#define SYSTEM_BT 12
+#define STUDIO_EXTRA_1 13
+#define STUDIO_EXTRA_2 14
+#define STUDIO_EXTRA_3 15
 
 // Tap a letter normally; hold it for 300 ms to send Left Shift + letter.
 #define AS(keycode) &as LS(keycode) keycode
@@ -732,13 +733,13 @@
 // |  `  |  <  |  >  |  (  |  )  |     |   |  #  |  _  |  -  |  /  |  \\  |  -  |
 // | M22 | M23 | M24 | M25 |  /  |  |  |   |  @  |  .  |  ,  |  !  |  ?  |  /  |
 // | M26 |  {  |  }  |  [  |  ]  |     |   |  '  |  \"  |  :  |  ;  |  =  |  *  |
-//                    |     |     |     |   |     |     |     |
+//                    |     |     |     |   | TAB/SYM-NUM | SPC/SMILES |     |
                         display-name = "Symbols";
                         bindings = <
    &kp GRAVE &kp LESS_THAN &kp GREATER_THAN &kp LPAR &kp RPAR &none   &kp HASH &kp UNDER &kp MINUS &kp FSLH &kp BSLH &kp MINUS
    &oryx_m22 &oryx_m23 &oryx_m24 &oryx_m25 &kp FSLH &kp PIPE         &kp AT &kp DOT &kp COMMA &kp EXCL &kp QMARK &kp FSLH
    &oryx_m26 &kp LBRC &kp RBRC &kp LBKT &kp RBKT &none               &kp SQT &kp DQT &kp COLON &kp SEMI &kp EQUAL &kp ASTRK
-                  &trans &trans &trans   &trans &lt SMILES SPACE &trans
+                  &trans &trans &trans   &lt SYM_NUM TAB &lt SMILES SPACE &trans
                         >;
                 };
 
@@ -762,14 +763,14 @@
 // |     |     |     |  (  |  )  |     |   |  №  |  _  |  -  |  /  |  \\  |  -  |
 // |     |     |     |     |     |     |   |     |  .  |  ,  |  !  |  ?  |  /  |
 // |     |     |     |     |     |     |   |     |  "  |  :  |  ;  |  =  |  *  |
-//                    |     |     |     |   |     | SPC/RU-SMILES |     |
+//                    |     |     |     |   | TAB/SYM-NUM | SPC/RU-SMILES |     |
 // Bindings preserve QMK HID usages and rely on Russian-PC on the host.
                         display-name = "Russian Symbols";
                         bindings = <
    &none &none &none &kp LS(N9) &kp LS(N0) &none   &kp LS(N3) &kp LS(MINUS) &kp MINUS &kp LS(BSLH) &kp BSLH &kp MINUS
    &none &none &none &none &none &none              &none &kp FSLH &kp LS(FSLH) &kp LS(N1) &kp LS(N7) &kp LS(BSLH)
    &none &none &none &none &none &none              &none &kp LS(N2) &kp LS(N6) &kp LS(N4) &kp EQUAL &kp LS(N8)
-                  &trans &trans &trans   &trans &lt RUSSIAN_SMILES SPACE &trans
+                  &trans &trans &trans   &lt SYM_NUM TAB &lt RUSSIAN_SMILES SPACE &trans
                         >;
                 };
 
@@ -783,6 +784,21 @@
                         bindings = <
    &none &none &none &none &none &none   &none &none &none &none &none &none
    &none &none &none &none &none &none   &none &russian_smile_happy &russian_smile_sad &none &none &none
+   &none &none &none &none &none &none   &none &none &none &none &none &none
+                  &trans &trans &trans   &trans &trans &trans
+                        >;
+                };
+
+                sym_num_layer {
+// -------------------------------------------------------------------------------------------------
+// |     |     |     |     |     |     |   |     |     |     |     |     |     |
+// |     | S+1 | S+2 | S+3 | S+4 | S+5 |   | S+6 | S+7 | S+8 | S+9 | S+0 |     |
+// |     |     |     |     |     |     |   |     |     |     |     |     |     |
+//                    |     |     |     |   |     |     |     |
+                        display-name = "Shift Digits";
+                        bindings = <
+   &none &none &none &none &none &none   &none &none &none &none &none &none
+   &none &kp LS(N1) &kp LS(N2) &kp LS(N3) &kp LS(N4) &kp LS(N5)   &kp LS(N6) &kp LS(N7) &kp LS(N8) &kp LS(N9) &kp LS(N0) &none
    &none &none &none &none &none &none   &none &none &none &none &none &none
                   &trans &trans &trans   &trans &trans &trans
                         >;

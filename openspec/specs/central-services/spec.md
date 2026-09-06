@@ -23,21 +23,6 @@ The dongle SHALL own keymap processing, positional combos, macros, Auto Shift, l
 - **WHEN** a peripheral reports the hold sequence for positions 37 and 39
 - **THEN** the dongle resolves the corresponding Symbols layer and then activates `SYM_NUM`
 
-### Requirement: ZMK Studio is available through the dongle
-ZMK Studio SHALL remain enabled on the central and available through the dongle's USB RPC; the Studio snippet MUST NOT be assigned to left or right peripheral firmware. Studio SHALL expose `Shift Digits` at index 11 and retain three reserved layers at indices 13–15.
-
-#### Scenario: Connect Studio
-- **WHEN** the dongle is connected to the computer over USB and ZMK Studio is opened
-- **THEN** Studio sees the complete Corne physical layout and all version-controlled layers, including `Shift Digits` and three reserved layers
-
-#### Scenario: Assign a custom OS behavior
-- **WHEN** Studio assigns a valid named profile to `&os_set` or a valid named action to `&os_action`
-- **THEN** behavior metadata validates the binding and Studio stores it without an invalid-parameters response
-
-#### Scenario: Inspect reserved layers
-- **WHEN** Studio reads the updated keymap
-- **THEN** `STUDIO_EXTRA_1`, `STUDIO_EXTRA_2`, and `STUDIO_EXTRA_3` remain reserved at indices 13, 14, and 15
-
 ### Requirement: The central safely tracks concurrent combos
 The dongle SHALL support eight concurrently pressed combos so modifier and momentary-layer combos do not overflow the ZMK v0.3 default active-combo storage.
 
@@ -55,3 +40,10 @@ Changing topology MUST NOT alter the OS-profile model: Windows SHALL be the defa
 #### Scenario: Change Bluetooth profile
 - **WHEN** the user selects a different `BT0`-`BT4` profile
 - **THEN** the current OS profile remains unchanged
+
+### Requirement: Central services remain available without Studio
+The dongle SHALL continue to provide keyboard HID, BLE host selection, positional keymap processing, macros, combos, Auto Shift, layer taps, and custom OS behaviors without enabling ZMK Studio. Removing Studio MUST NOT change the roles or firmware behavior of either peripheral half.
+
+#### Scenario: Use the keyboard after Studio removal
+- **WHEN** the updated dongle is flashed and either peripheral reports a key position
+- **THEN** the dongle processes the existing version-controlled keymap and sends the same keyboard HID behavior without exposing a Studio RPC endpoint

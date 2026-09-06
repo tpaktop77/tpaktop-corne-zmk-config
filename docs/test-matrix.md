@@ -11,6 +11,7 @@ Statuses:
 |---|---|---|---|---|
 | OpenSpec planning | `openspec status --change migrate-layout-to-dongle` | 4/4 artifacts complete | pass | proposal, design, six specs, and tasks exist |
 | OpenSpec strict | `openspec validate migrate-layout-to-dongle --strict` | valid, zero issues | pass | `Change 'migrate-layout-to-dongle' is valid` |
+| Editor removal OpenSpec | strict validation of the active removal change | valid, zero issues | pass | proposal, design, three delta specs, and seven tasks are coherent |
 | Source provenance | `git rev-parse` in the source clone | source is `e7d7c10a2b5193f777c4907fc70111ddc94d18b8` | pass | source master checked before migration |
 | Baseline binding parity | source checksum plus focused diff | keymap/module bindings match the source commit; timing differences are limited to the five documented four-key combos | pass | pre-translation `corne.keymap` SHA-256 `5f91722b4c530fb4bf88bbd86a0fb42feda272a2181468412d3f3504c5b9ff8c`; structural audit confirms only the five long combo timeouts changed |
 | English-only tracked text | full-tree Unicode Cyrillic-range `rg` search | no matches | pass | zero matching tracked files after translation |
@@ -21,7 +22,8 @@ Statuses:
 | Dongle transform | token comparison with in-tree ZMK v0.3 Corne | the same 42 `RC(row,col)` tokens in the same order | pass | 42/42 token exact match |
 | Peripheral physical layout | compiled Devicetree for both halves | `5 Column` disabled; `6 Column` uses the 42-position `default_transform`; no left offset and right `col-offset = 6` | pass | [left job 101290839943](https://github.com/tpaktop77/tpaktop-corne-zmk-config/actions/runs/33960259358/job/101290839943), [right job 101290839905](https://github.com/tpaktop77/tpaktop-corne-zmk-config/actions/runs/33960259358/job/101290839905) |
 | YAML syntax | Node `yaml` parser | `build.yaml` and the workflow parse without errors | pass | both YAML structures parsed |
-| Exclusions | `rg` audit | no battery proxy/fetching, layout behavior changes, or Studio activation in current build/config files | pass | fetching/proxy explicitly `n`; no Studio snippet or Kconfig enablement |
+| Exclusions | `rg` audit | no battery proxy/fetching, layout behavior changes, or optional keymap-editor activation in current build/config files | pass | fetching/proxy explicitly `n`; no editor RPC snippet or Kconfig enablement |
+| Editor removal structure | structural audit | exactly 13 ordered functional layers at indices 0-12, each with 42 bindings | pass | `GRAPHITE=0` through `SYM_NUM=11` and final `SYSTEM_BT=12`; no reserved nodes |
 | Display queue | Kconfig audit | built-in nice!view updates use the dedicated queue | pass | `CONFIG_ZMK_DISPLAY_WORK_QUEUE_DEDICATED=y`; system queue not selected |
 | Overlapping combo hardening | structural audit | exactly five four-key overlaps use 80 ms; the other 30 combos remain at 50 ms | pass | five expected names at 80 ms; no other timeout changes |
 | Custom OS behavior hardening | source audit plus dongle build | active state is position-keyed and release uses the stored keycode | pass | source assertions pass; [dongle job 101290839901](https://github.com/tpaktop77/tpaktop-corne-zmk-config/actions/runs/33960259358/job/101290839901) |
@@ -30,11 +32,11 @@ Statuses:
 
 | Configuration | Expected result | Status | Evidence |
 |---|---|---|---|
-| `nice_nano_v2 + tpaktop_corne_dongle` | successful central UF2 build | pending | current change CI |
-| `nice_nano_v2 + corne_left + tpaktop_corne_6col + nice_view_adapter + nice_view`, peripheral role | successful left UF2 build | pass | [job 101290839943](https://github.com/tpaktop77/tpaktop-corne-zmk-config/actions/runs/33960259358/job/101290839943) |
-| `nice_nano_v2 + corne_right + tpaktop_corne_6col + nice_view_adapter + nice_view`, peripheral role | successful right UF2 build | pass | [job 101290839905](https://github.com/tpaktop77/tpaktop-corne-zmk-config/actions/runs/33960259358/job/101290839905) |
-| `nice_nano_v2 + settings_reset` | successful reset UF2 build | pass | [job 101290839907](https://github.com/tpaktop77/tpaktop-corne-zmk-config/actions/runs/33960259358/job/101290839907) |
-| merged artifact | four unambiguously named UF2 files in `corne-dongle-firmware_YYYYMMDD_HHMM.zip` | pass | [run 33960259358](https://github.com/tpaktop77/tpaktop-corne-zmk-config/actions/runs/33960259358), artifact `corne-dongle-firmware_20260905_1017`, SHA-256 `446ad2dc1ff9a07cc89e57155879a9d907f574eb04183d9154b89f0aec1c0b14` |
+| `nice_nano_v2 + tpaktop_corne_dongle` | successful central UF2 build | pass | [job 101424352372](https://github.com/tpaktop77/tpaktop-corne-zmk-config/actions/runs/34010115711/job/101424352372) |
+| `nice_nano_v2 + corne_left + tpaktop_corne_6col + nice_view_adapter + nice_view`, peripheral role | successful left UF2 build | pass | [job 101424352351](https://github.com/tpaktop77/tpaktop-corne-zmk-config/actions/runs/34010115711/job/101424352351) |
+| `nice_nano_v2 + corne_right + tpaktop_corne_6col + nice_view_adapter + nice_view`, peripheral role | successful right UF2 build | pass | [job 101424352400](https://github.com/tpaktop77/tpaktop-corne-zmk-config/actions/runs/34010115711/job/101424352400) |
+| `nice_nano_v2 + settings_reset` | successful reset UF2 build | pass | [job 101424352374](https://github.com/tpaktop77/tpaktop-corne-zmk-config/actions/runs/34010115711/job/101424352374) |
+| merged artifact | four unambiguously named UF2 files in `corne-dongle-firmware_YYYYMMDD_HHMM.zip` | pass | [run 34010115711](https://github.com/tpaktop77/tpaktop-corne-zmk-config/actions/runs/34010115711), artifact `corne-dongle-firmware_20260906_0353`; all four files inspected |
 
 ## Layout and switching
 
@@ -265,7 +267,7 @@ Additional state tests:
 | USB endpoint | input from both halves arrives through the connected USB dongle | manual pending |
 | BLE endpoint | host is paired with the dongle; input from both halves arrives through selected `BT0`-`BT4` | manual pending |
 | five host profiles | BT0-BT4 select independently without displacing split bonds | manual pending |
-| timestamp | downloaded archive name matches UTC `corne-dongle-firmware_YYYYMMDD_HHMM.zip` | pass: `corne-dongle-firmware_20260905_0057` |
+| timestamp | downloaded archive name matches UTC `corne-dongle-firmware_YYYYMMDD_HHMM.zip` | pass: `corne-dongle-firmware_20260906_0353` |
 | stable filenames | archive contains documented dongle, left, right, and settings-reset names | pass: `tpaktop-corne-dongle.uf2`, `corne-left-peripheral.uf2`, `corne-right-peripheral.uf2`, `settings-reset-nice-nano-v2.uf2` |
 | rollback | after another reset, previous view firmware restores central-left topology | manual pending |
 

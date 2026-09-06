@@ -11,5 +11,12 @@
 ## 3. Validate and Deliver
 
 - [x] 3.1 Run focused repository searches, structural assertions, `git diff --check`, English-only validation, and strict OpenSpec validation; verify unrelated keymap behavior, dongle, BLE, USB, display, split, macro, combo, timing, and custom behavior files remain unchanged.
-- [ ] 3.2 Build the dongle, left peripheral, right peripheral, and settings-reset targets; verify all four jobs and the merged firmware artifact succeed.
-- [ ] 3.3 Record validation evidence, review the final diff, commit the completed change, push the branch, and create a pull request with remaining hardware checks identified.
+- [x] 3.2 Build the dongle, left peripheral, right peripheral, and settings-reset targets; verify all four jobs and the merged firmware artifact succeed.
+- [x] 3.3 Record validation evidence, review the final diff, commit the completed change, push the branch, and create a pull request with remaining hardware checks identified.
+
+## Validation Evidence
+
+- GitHub Actions run `34010115711` completed successfully for implementation commit `9646342277a2880a7e559f1c62f3ae11982f6dff`.
+- Left peripheral job `101424352351`, dongle job `101424352372`, settings-reset job `101424352374`, and right peripheral job `101424352400` all completed successfully.
+- Artifact `corne-dongle-firmware_20260906_0353` contains all four expected UF2 files. The inspected dongle firmware SHA-256 is `08718a49033550aabaec281c5963787884b9480893206de2776120a8a54df2ee`.
+- Pull request: `https://github.com/tpaktop77/tpaktop-corne-zmk-config/pull/4`.

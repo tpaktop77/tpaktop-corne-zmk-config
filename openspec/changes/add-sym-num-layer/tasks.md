@@ -13,4 +13,10 @@
 
 - [x] 3.1 Verify 16 layers, 42 bindings per keymap node, exact node order, the requested `SYM_NUM` mapping, and no changes to Studio or build configuration.
 - [x] 3.2 Run `git diff --check`, a repository-wide Cyrillic search, and `openspec validate add-sym-num-layer --strict`; resolve every error.
-- [ ] 3.3 Build all four entries from `build.yaml`, confirm dongle, left, right, and settings-reset jobs succeed, and record the validation evidence.
+- [x] 3.3 Build all four entries from `build.yaml`, confirm dongle, left, right, and settings-reset jobs succeed, and record the validation evidence.
+
+## Validation Evidence
+
+- GitHub Actions run `34008651288` completed successfully for commit `e2674126b71f69bff45e91c7829f8dc81e0afce1`.
+- Dongle job `101420418234`, right peripheral job `101420418252`, settings-reset job `101420418262`, and left peripheral job `101420418272` all completed successfully.
+- Artifact `corne-dongle-firmware_20260906_0318` contains `tpaktop-corne-dongle.uf2`, `corne-left-peripheral.uf2`, `corne-right-peripheral.uf2`, and `settings-reset-nice-nano-v2.uf2`.

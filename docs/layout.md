@@ -1,6 +1,6 @@
 # Corne layout
 
-The layout was migrated from read-only `tpaktop-corne-wireless-view-zmk-config@e7d7c10`. Intentional review-driven migration differences are an 80 ms timeout for five overlapping four-key combos, increased concurrent-combo capacity, and Studio-safe custom OS behaviors. The shared `SYM_NUM` layer is a later version-controlled extension. The dongle migration also changes split topology, nice!view contents, the Studio endpoint, and firmware packaging. `.` represents `&none`, and `▽` represents `&trans`. `AS(X)` means Auto Shift: tap sends `X`; holding longer than 300 ms sends `Shift+X`.
+The layout was migrated from read-only `tpaktop-corne-wireless-view-zmk-config@e7d7c10`. Intentional review-driven migration differences are an 80 ms timeout for five overlapping four-key combos, increased concurrent-combo capacity, and hardened custom OS behaviors. The shared `SYM_NUM` layer is a later version-controlled extension. The dongle migration also changes split topology, nice!view contents, and firmware packaging. `.` represents `&none`, and `▽` represents `&trans`. `AS(X)` means Auto Shift: tap sends `X`; holding longer than 300 ms sends `Shift+X`.
 
 ## Device architecture
 
@@ -10,7 +10,7 @@ Corne Left  (peripheral + nice!view) --BLE--\
 Corne Right (peripheral + nice!view) --BLE--/
 ```
 
-The dongle has no keys or screen. It processes the shared 42-key keymap, combos, macros, OS profile, five host Bluetooth profiles, and ZMK Studio. The halves forward physical positions only. They do not generate keyboard HID without the dongle.
+The dongle has no keys or screen. It processes the shared 42-key keymap, combos, macros, OS profile, and five host Bluetooth profiles. The halves forward physical positions only. They do not generate keyboard HID without the dongle.
 
 The built-in status screen on each half's nice!view shows that half's battery percentage, USB charging state, and dongle connection state. Layer name, OS/host profile, and decorative artwork are not displayed. Display updates explicitly use a dedicated ZMK work queue.
 
@@ -44,9 +44,6 @@ Positions `32`, `33`, and `34`, which held `F22/F23/F24` on Oryx Graphite, conta
 | 10 | `RUSSIAN_SMILES` | Russian Smiles | emoticons produced under Russian-PC |
 | 11 | `SYM_NUM` | Shift Digits | shared Shift+1 through Shift+0 home row |
 | 12 | `SYSTEM_BT` | System | Bluetooth and OS profile |
-| 13 | `STUDIO_EXTRA_1` | reserved | ZMK Studio reserve |
-| 14 | `STUDIO_EXTRA_2` | reserved | ZMK Studio reserve |
-| 15 | `STUDIO_EXTRA_3` | reserved | ZMK Studio reserve |
 
 ZMK resolves a binding from the active layer with the highest index. All three base layers therefore come first, shared thumb overlays come after them, and each child layer (`VIM`, `SMILES`, `RUSSIAN_SMILES`, `SYM_NUM`) comes after its parent. `SYM_NUM=11` is above both `SYMBOLS=7` and `RUSSIAN_SYMBOLS=9`, while `SYSTEM_BT=12` remains above all language layers. This gives Graphite, QWERTY, and Russian an effectively identical thumb cluster.
 

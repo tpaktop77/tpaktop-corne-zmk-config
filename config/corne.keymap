@@ -23,9 +23,6 @@
 #define RUSSIAN_SMILES 10
 #define SYM_NUM 11
 #define SYSTEM_BT 12
-#define STUDIO_EXTRA_1 13
-#define STUDIO_EXTRA_2 14
-#define STUDIO_EXTRA_3 15
 
 // Tap a letter normally; hold it for 300 ms to send Left Shift + letter.
 #define AS(keycode) &as LS(keycode) keycode
@@ -817,18 +814,6 @@
    &bt_clear_hold 0 0 &none &none &none &none &none                             &none &none &none &none &none &none
                   &trans &trans &trans   &trans &trans &trans
                         >;
-                };
-
-                studio_extra_1 {
-                        status = "reserved";
-                };
-
-                studio_extra_2 {
-                        status = "reserved";
-                };
-
-                studio_extra_3 {
-                        status = "reserved";
                 };
         };
 };

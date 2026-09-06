@@ -39,7 +39,7 @@ The old firmware stores bonds for a topology with the left half as central. A no
 6. Flash `corne-right-peripheral.uf2` to the right half.
 7. Connect the dongle to the computer over USB, then power on both halves.
 8. Confirm that both nice!view displays show connected status; initial split pairing can take several seconds.
-9. Test input from each half, a cross-half combo, and ZMK Studio through the USB dongle.
+9. Test input from each half and a cross-half combo through the USB dongle.
 10. For BLE, select an unused `BT0`-`BT4` profile on the System layer and pair the computer with the dongle itself.
 
 ## nice!view contents

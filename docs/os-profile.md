@@ -30,8 +30,6 @@ Named values are exported by a repository-local devicetree binding header.
 
 The selected keycode is retained by invocation position until release. Duplicate assignments of the same action therefore remain independent, and even an artificial OS-profile change between press and release cannot release a different modifier or leave the original modifier stuck.
 
-Both behaviors publish parameter metadata to ZMK Studio: `&os_set` exposes the three named profiles and `&os_action` exposes all 13 named actions. Studio can therefore validate and assign them without treating their required parameter as invalid.
-
 ## Action table
 
 | Value | Windows | macOS | Linux |

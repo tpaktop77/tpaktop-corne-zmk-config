@@ -2,7 +2,7 @@
 
 Primary QMK reference: `tpaktop77/oryx-with-custom-qmk`, remote `main@5d674ed4d866b66e34389262092cc5347da90bc7`. The direct read-only source for this dongle migration is `tpaktop-corne-wireless-view-zmk-config@e7d7c10`. It already contains Graphite/QWERTY/Russian, corrected thumb-overlay priority, 300 ms Auto Shift, positional combos, and the OS-profile module.
 
-The target `tpaktop-corne-zmk-config` repository preserves all keymap bindings. Intentional differences are limited to dongle topology, peripheral display mode, Studio RPC placement, build matrix, settings reset, firmware artifact naming, the 6-column safeguard, English-only documentation/comments, and review-driven combo/custom-behavior hardening. Five overlapping four-key combos use 80 ms instead of 50 ms; other combo timings remain unchanged. Source repositories remain unchanged. Hardware validation of the new topology remains with the owner according to `docs/test-matrix.md`.
+The target `tpaktop-corne-zmk-config` repository preserves all keymap bindings. Intentional differences are limited to dongle topology, peripheral display mode, build matrix, settings reset, firmware artifact naming, the 6-column safeguard, English-only documentation/comments, review-driven combo/custom-behavior hardening, the later shared `SYM_NUM` layer, and removal of the optional keymap editor endpoint. Five overlapping four-key combos use 80 ms instead of 50 ms; other combo timings remain unchanged. Source repositories remain unchanged. Hardware validation of the new topology remains with the owner according to `docs/test-matrix.md`.
 
 ## Dongle migration layer
 
@@ -10,7 +10,6 @@ The target `tpaktop-corne-zmk-config` repository preserves all keymap bindings. 
 |---|---|---|---|---|---|
 | view repo `e7d7c10` | `corne_left` central | `tpaktop_corne_dongle` | headless central on `nice_nano_v2` | implemented; CI pass | run 33934665598; USB/BLE manual |
 | view repo `e7d7c10` | left/right split roles | `corne_left`, `corne_right` | two BLE peripherals; 5-column layout disabled, 6-column fixed | implemented; CI pass | run 33934665598: compiled Devicetree for both halves; hardware layout/combo retest manual |
-| view repo `e7d7c10` | Studio snippet on left | dongle build | Studio USB RPC on central | implemented; CI pass | dongle Studio build pass; connection manual |
 | view repo nice!view custom widget | layer/profile/art UI | peripheral built-in status | local battery/charging and split link; dedicated display queue | implemented; CI pass | both nice!view builds pass; displays manual |
 | view repo workflow | two UF2 files in `firmware.zip` | four-target workflow | dongle/left/right/reset plus timestamped archive | implemented; CI pass | artifact `corne-dongle-firmware_20260905_0057`, four UF2 files audited |
 | view repo keymap/module | complete working baseline | shared central keymap/module | bindings preserved; five long combo timeouts and custom behavior internals hardened; comments translated | implemented; CI pass | run 33960259358 plus structural audit and regression matrix |
@@ -31,8 +30,8 @@ The target `tpaktop-corne-zmk-config` repository preserves all keymap bindings. 
 | `6JP4n/keymap.c` | 6 | three lower rows | Vim/macros | `VIM` 6 | 0-41 | preserved | implemented; CI pass | build plus manual |
 | `6JP4n/keymap.c` | 7 | three lower rows | English Symbols | `SYMBOLS` 7 | 0-41 | preserved; Smiles reference fixed | implemented; CI pass | build plus manual |
 | `6JP4n/keymap.c` | 9 | three lower rows | English Smiles | `SMILES` 8 | 0-41 | preserved | implemented; CI pass | build plus manual |
-| prior ZMK Lower plus new | none | left/right body | Bluetooth plus OS controls | `SYSTEM_BT` 11 | 0-35 | BT0-BT4, protected clear, OS selectors 19-21 | implemented; CI pass | build plus manual |
-| target Studio | none | reserved nodes | editable capacity | 12-14 | n/a | three `status = "reserved"` nodes after Russian layers | implemented; CI pass | Studio connection plus build |
+| target extension | none | physical home row | shifted digits | `SYM_NUM` 11 | 13-22 | shared Shift+1 through Shift+0 | implemented; CI pass | build plus hardware test |
+| prior ZMK Lower plus new | none | left/right body | Bluetooth plus OS controls | `SYSTEM_BT` 12 | 0-35 | BT0-BT4, protected clear, OS selectors 19-21 | implemented; CI pass | build plus manual |
 | `6JP4n/config.h` | global | English/Russian letters | QMK Auto Shift 200 ms | `GRAPHITE`, `QWERTY`, `RUSSIAN` | every letter position | ZMK hold-tap Auto Shift 300 ms; thumb `&lt.quick-tap-ms` remains 250 ms | tuned; CI pass | false-positive and intentional-hold USB/BLE |
 
 ## Russian base layer

@@ -42,9 +42,9 @@ On `SYM_NUM`, positions 13–17 SHALL send `LS(N1)` through `LS(N5)`, and positi
 - **WHEN** `SYM_NUM` is active
 - **THEN** body positions outside 13–22 send nothing and all six thumb positions resolve through lower active layers
 
-### Requirement: Layer and Studio ordering remains explicit
-The keymap constants and Devicetree node order SHALL be `RUSSIAN_SMILES=10`, `SYM_NUM=11`, `SYSTEM_BT=12`, and `STUDIO_EXTRA_1..3=13..15`. ZMK Studio support and the three reserved layers MUST remain present.
+### Requirement: Functional layer ordering remains explicit
+The keymap constants and Devicetree node order SHALL contain exactly 13 functional layers from `GRAPHITE=0` through `RUSSIAN_SMILES=10`, `SYM_NUM=11`, and `SYSTEM_BT=12`. No Studio-only reserved layer constants or nodes SHALL remain.
 
-#### Scenario: Inspect layer definitions
+#### Scenario: Inspect final layer definitions
 - **WHEN** the constants and nodes inside `keymap {}` are compared
-- **THEN** every node appears in ascending index order and the three reserved Studio nodes follow `SYSTEM_BT`
+- **THEN** every functional node appears in ascending index order, `SYM_NUM` remains at index 11, and `SYSTEM_BT` is the final node at index 12

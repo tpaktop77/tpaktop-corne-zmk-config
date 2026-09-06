@@ -1,6 +1,6 @@
 # Corne layout
 
-The layout was migrated from read-only `tpaktop-corne-wireless-view-zmk-config@e7d7c10`. Intentional review-driven differences are limited to an 80 ms timeout for five overlapping four-key combos, increased concurrent-combo capacity, and Studio-safe custom OS behaviors. The dongle migration also changes split topology, nice!view contents, the Studio endpoint, and firmware packaging. `.` represents `&none`, and `▽` represents `&trans`. `AS(X)` means Auto Shift: tap sends `X`; holding longer than 300 ms sends `Shift+X`.
+The layout was migrated from read-only `tpaktop-corne-wireless-view-zmk-config@e7d7c10`. Intentional review-driven migration differences are an 80 ms timeout for five overlapping four-key combos, increased concurrent-combo capacity, and Studio-safe custom OS behaviors. The shared `SYM_NUM` layer is a later version-controlled extension. The dongle migration also changes split topology, nice!view contents, the Studio endpoint, and firmware packaging. `.` represents `&none`, and `▽` represents `&trans`. `AS(X)` means Auto Shift: tap sends `X`; holding longer than 300 ms sends `Shift+X`.
 
 ## Device architecture
 
@@ -42,12 +42,13 @@ Positions `32`, `33`, and `34`, which held `F22/F23/F24` on Oryx Graphite, conta
 | 8 | `SMILES` | Smiles | English ASCII emoticons |
 | 9 | `RUSSIAN_SYMBOLS` | Russian Symbols | symbols produced under Russian-PC |
 | 10 | `RUSSIAN_SMILES` | Russian Smiles | emoticons produced under Russian-PC |
-| 11 | `SYSTEM_BT` | System | Bluetooth and OS profile |
-| 12 | `STUDIO_EXTRA_1` | reserved | ZMK Studio reserve |
-| 13 | `STUDIO_EXTRA_2` | reserved | ZMK Studio reserve |
-| 14 | `STUDIO_EXTRA_3` | reserved | ZMK Studio reserve |
+| 11 | `SYM_NUM` | Shift Digits | shared Shift+1 through Shift+0 home row |
+| 12 | `SYSTEM_BT` | System | Bluetooth and OS profile |
+| 13 | `STUDIO_EXTRA_1` | reserved | ZMK Studio reserve |
+| 14 | `STUDIO_EXTRA_2` | reserved | ZMK Studio reserve |
+| 15 | `STUDIO_EXTRA_3` | reserved | ZMK Studio reserve |
 
-ZMK resolves a binding from the active layer with the highest index. All three base layers therefore come first, shared thumb overlays come after them, and each child layer (`VIM`, `SMILES`, `RUSSIAN_SMILES`) comes after its parent. This gives Graphite, QWERTY, and Russian an effectively identical thumb cluster.
+ZMK resolves a binding from the active layer with the highest index. All three base layers therefore come first, shared thumb overlays come after them, and each child layer (`VIM`, `SMILES`, `RUSSIAN_SMILES`, `SYM_NUM`) comes after its parent. `SYM_NUM=11` is above both `SYMBOLS=7` and `RUSSIAN_SYMBOLS=9`, while `SYSTEM_BT=12` remains above all language layers. This gives Graphite, QWERTY, and Russian an effectively identical thumb cluster.
 
 ## Shared base-layer thumb keys
 
@@ -170,8 +171,10 @@ TAB   LALT LGUI LSFT LCTL .  | .    RCTL RSFT RGUI RALT .
 `   <   >   (   )   . | #  _  -  /  \ -
 M22 M23 M24 M25 /   | | @  .  ,  !  ?  /
 M26 {   }   [   ]   . | '  "  :  ;  =  *
-              ▽  ▽  ▽ | ▽  SPACE/SMILES  ▽
+              ▽  ▽  ▽ | TAB/SYM-NUM  SPACE/SMILES  ▽
 ```
+
+While position 37 remains held to keep `SYMBOLS` active, holding position 39 opens the shared `SYM_NUM` layer. Tapping position 39 sends Tab.
 
 ## 8 - Smiles
 
@@ -192,10 +195,10 @@ Only the three lower Voyager rows are migrated. The diagram shows expected Russi
 . . . LeftParen RightParen . | NumberSign Underscore Minus Slash Backslash Minus
 . . . .         .          . | .          Dot        Comma Exclamation Question Slash
 . . . .         .          . | .          DoubleQuote Colon Semicolon Equal Asterisk
-                        ▽ ▽ ▽ | ▽ SPACE/RU-SMILES ▽
+                        ▽ ▽ ▽ | TAB/SYM-NUM SPACE/RU-SMILES ▽
 ```
 
-Holding position 40 opens `RUSSIAN_SMILES`; tapping sends Space. Other transparent thumbs first inherit from `RUSSIAN` and then, when needed, from `GRAPHITE`. Percent, Ruble Sign, and Plus from the omitted Voyager top row have not been relocated.
+While position 37 remains held to keep `RUSSIAN_SYMBOLS` active, holding position 39 opens the same shared `SYM_NUM` layer; tapping position 39 sends Tab. Holding position 40 opens `RUSSIAN_SMILES`; tapping sends Space. Other transparent thumbs first inherit from `RUSSIAN` and then, when needed, from `GRAPHITE`. Percent, Ruble Sign, and Plus from the omitted Voyager top row have not been relocated.
 
 ## 10 - Russian Smiles
 
@@ -210,7 +213,22 @@ Holding position 40 opens `RUSSIAN_SMILES`; tapping sends Space. Other transpare
 - Position 20: source `ST_MACRO_36`, `Shift+6` followed by `Shift+9`, produces `:(` under Russian-PC.
 - Combo positions `5+17` (aliases `RU_PE+RU_IE`) hold this layer with `slow-release`; the English Smiles combo at the same positions has separate layer scope.
 
-## 11 - System
+## 11 - Shift Digits
+
+`SYM_NUM` is shared by the English and Russian Symbols layers:
+
+```text
+.   .   .   .   .   .   | .   .   .   .   .   .
+.   S+1 S+2 S+3 S+4 S+5 | S+6 S+7 S+8 S+9 S+0 .
+.   .   .   .   .   .   | .   .   .   .   .   .
+            ▽   ▽   ▽    | ▽   ▽   ▽
+```
+
+Positions 13–22 send `Shift+1` through `Shift+0`; positions 12 and 23 and every other body position are `&none`. Thumb positions 36–41 are `&trans`.
+
+Activation is a nested hold: hold position 37 to open `SYMBOLS` or `RUSSIAN_SYMBOLS`, keep it held, and then hold position 39. A tap of position 39 sends Tab. This uses the existing global `&lt` behavior and does not change its timing. The firmware sends the same shifted digit HID usages for both host layouts; the active host layout determines the resulting symbols.
+
+## 12 - System
 
 This layer is active only while the left outer thumb at position 36 is held on any base layer, including Russian. The left hand controls five dongle host Bluetooth profiles; the right hand controls the independent OS profile, which also resides on the dongle.
 

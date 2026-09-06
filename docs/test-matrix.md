@@ -15,22 +15,22 @@ Statuses:
 | Baseline binding parity | source checksum plus focused diff | keymap/module bindings match the source commit; timing differences are limited to the five documented four-key combos | pass | pre-translation `corne.keymap` SHA-256 `5f91722b4c530fb4bf88bbd86a0fb42feda272a2181468412d3f3504c5b9ff8c`; structural audit confirms only the five long combo timeouts changed |
 | English-only tracked text | full-tree Unicode Cyrillic-range `rg` search | no matches | pass | zero matching tracked files after translation |
 | Whitespace | `git diff --check` | no output, exit 0 | pass | exit 0, no output |
-| Layer sizes | structural script | 42 bindings on every active layer | pass | Graphite through System: 12 x 42 |
+| Layer sizes | structural script | 42 bindings on every active layer | pass | Graphite through System: 13 x 42 |
 | Named layer references | `rg` audit | no unexplained numeric layer references | pass | named references preserved from the source baseline |
-| Layer priority | structural audit | `GRAPHITE 0`, `QWERTY 1`, `RUSSIAN 2`; overlays above bases; node order matches defines | pass | 15 named defines and the tested node order are preserved |
+| Layer priority | structural audit | `GRAPHITE 0`, `QWERTY 1`, `RUSSIAN 2`; overlays above bases; node order matches defines | pass | 13 named defines and the tested node order are preserved |
 | Dongle transform | token comparison with in-tree ZMK v0.3 Corne | the same 42 `RC(row,col)` tokens in the same order | pass | 42/42 token exact match |
 | Peripheral physical layout | compiled Devicetree for both halves | `5 Column` disabled; `6 Column` uses the 42-position `default_transform`; no left offset and right `col-offset = 6` | pass | [left job 101290839943](https://github.com/tpaktop77/tpaktop-corne-zmk-config/actions/runs/33960259358/job/101290839943), [right job 101290839905](https://github.com/tpaktop77/tpaktop-corne-zmk-config/actions/runs/33960259358/job/101290839905) |
 | YAML syntax | Node `yaml` parser | `build.yaml` and the workflow parse without errors | pass | both YAML structures parsed |
-| Exclusions | `rg` audit | no battery proxy/fetching, layout behavior changes, or Studio snippet on peripherals | pass | fetching/proxy explicitly `n`; one Studio snippet only on the dongle |
+| Exclusions | `rg` audit | no battery proxy/fetching, layout behavior changes, or Studio activation in current build/config files | pass | fetching/proxy explicitly `n`; no Studio snippet or Kconfig enablement |
 | Display queue | Kconfig audit | built-in nice!view updates use the dedicated queue | pass | `CONFIG_ZMK_DISPLAY_WORK_QUEUE_DEDICATED=y`; system queue not selected |
 | Overlapping combo hardening | structural audit | exactly five four-key overlaps use 80 ms; the other 30 combos remain at 50 ms | pass | five expected names at 80 ms; no other timeout changes |
-| Custom OS behavior hardening | source audit plus dongle build | Studio metadata covers 3 profiles/13 actions; active state is position-keyed and release uses the stored keycode | pass | source assertions pass; [dongle job 101290839901](https://github.com/tpaktop77/tpaktop-corne-zmk-config/actions/runs/33960259358/job/101290839901) |
+| Custom OS behavior hardening | source audit plus dongle build | active state is position-keyed and release uses the stored keycode | pass | source assertions pass; [dongle job 101290839901](https://github.com/tpaktop77/tpaktop-corne-zmk-config/actions/runs/33960259358/job/101290839901) |
 
 ## Build matrix
 
 | Configuration | Expected result | Status | Evidence |
 |---|---|---|---|
-| `nice_nano_v2 + tpaktop_corne_dongle + studio-rpc-usb-uart` | successful central UF2 build | pass | [job 101290839901](https://github.com/tpaktop77/tpaktop-corne-zmk-config/actions/runs/33960259358/job/101290839901) |
+| `nice_nano_v2 + tpaktop_corne_dongle` | successful central UF2 build | pending | current change CI |
 | `nice_nano_v2 + corne_left + tpaktop_corne_6col + nice_view_adapter + nice_view`, peripheral role | successful left UF2 build | pass | [job 101290839943](https://github.com/tpaktop77/tpaktop-corne-zmk-config/actions/runs/33960259358/job/101290839943) |
 | `nice_nano_v2 + corne_right + tpaktop_corne_6col + nice_view_adapter + nice_view`, peripheral role | successful right UF2 build | pass | [job 101290839905](https://github.com/tpaktop77/tpaktop-corne-zmk-config/actions/runs/33960259358/job/101290839905) |
 | `nice_nano_v2 + settings_reset` | successful reset UF2 build | pass | [job 101290839907](https://github.com/tpaktop77/tpaktop-corne-zmk-config/actions/runs/33960259358/job/101290839907) |
@@ -236,7 +236,7 @@ Additional state tests:
 | action press, OS change, action release | original HID code is released; no stuck modifiers | manual pending |
 | macOS Voice | consumer usage 0xCF invokes Siri/voice | manual pending |
 
-## Split, nice!view, and Studio
+## Split and nice!view
 
 | Check | Expected result | Status |
 |---|---|---|
@@ -251,12 +251,8 @@ Additional state tests:
 | reconnect right | right reconnects to the central after a power cycle | manual pending |
 | nice!view left | local percentage/charging/link; no layer/art/host profile; display updates do not delay input | manual pending |
 | nice!view right | local percentage/charging/link; no layer/art/host profile; display updates do not delay input | manual pending |
-| ZMK Studio USB | connects through the dongle central snippet | manual pending |
-| Studio reserved layers | three reserved entries are available | manual pending |
-| Studio Russian layers | display names Russian, Russian Symbols, and Russian Smiles are visible; three reserved entries remain | manual pending |
-| Studio custom OS metadata | `Set OS Profile` offers Windows/macOS/Linux and `OS Action` offers all 13 named actions; valid assignments are accepted | manual pending |
-| duplicate OS action positions | assign the same OS action to two positions and overlap their presses/releases; both invocations remain independent with no stuck modifier | manual pending |
-| Studio source of truth | reboot restores version-controlled behaviors and combos | manual pending |
+| duplicate OS action positions | with the same action assigned at two version-controlled positions, overlap their presses/releases; both invocations remain independent with no stuck modifier | manual pending |
+| version-controlled source of truth | reboot restores version-controlled behaviors and combos | manual pending |
 
 ## Provisioning, endpoints, and packaging
 

@@ -8,6 +8,16 @@ Official references:
 - [Split Keyboards](https://zmk.dev/docs/features/split-keyboards)
 - [Connection Issues / settings reset](https://zmk.dev/docs/troubleshooting/connection-issues)
 
+## Prospector Scanner
+
+The physical Prospector runs independent Scanner firmware maintained in [t-ogura/zmk-config-prospector](https://github.com/t-ogura/zmk-config-prospector). The dedicated keyboard dongle broadcasts status advertisements, and Prospector passively observes them. It is not a member of the keyboard split and does not replace or connect either Corne peripheral.
+
+The scanner-visible keyboard name is `TPAK`. The advertised central side is `AUX` because the separate dongle is neither keyboard half, and the expected peripheral count is two. The host-visible Bluetooth name may also appear as `TPAK`; an already bonded host may continue to show the cached `TPAK Corne` name without affecting its connection.
+
+For this integration, normally only `tpaktop-corne-dongle.uf2` needs to be flashed. The left and right halves do not need new firmware, and a normal dongle update does not require `settings-reset-nice-nano-v2.uf2` or clearing a Bluetooth profile. Existing split and host bonds should remain intact.
+
+Peripheral battery fetching and host-side battery proxying remain disabled on ZMK v0.3 to avoid risking split discovery and input reliability with a dongle central and two BLE peripherals. Prospector still receives the keyboard name, layer, modifiers, WPM, active profile, and other central status, but actual left/right half battery percentages are unavailable.
+
 ## Firmware artifact contents
 
 GitHub Actions creates an archive named like this:

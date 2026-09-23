@@ -625,7 +625,7 @@
 // |       |  N  |  R  |  T  |  S  |  G  |   |  Y  |  H  |  A  |  E  |  I  |       |
 // |       |  Q  |  X  |  M  |  C  |  V  |   |  K  |  P  |     |     |     | QWERTY|
 //               | SYSTEM | BSP/SYMB | DEL/NUM |   | TAB/FN | SPC/NAV |       |
-                        display-name = "Graphite";
+                        display-name = "GRPH";
                         bindings = <
    &kp ESC AS(B) AS(L) AS(D) AS(W) AS(Z)   &kp KP_NUMLOCK AS(F) AS(O) AS(U) AS(J) &none
    &none AS(N) AS(R) AS(T) AS(S) AS(G)   AS(Y) AS(H) AS(A) AS(E) AS(I) &none
@@ -640,7 +640,7 @@
 // |       |  A  |  S  |  D  |  F  |  G  |   |  H  |  J  |  K  |  L  |     |       |
 // |       |  Z  |  X  |  C  |  V  |  B  |   |  N  |  M  |     |     |     |GRAPHITE|
 //               | SYSTEM | BSP/SYMB | DEL/NUM |   | TAB/FN | SPC/NAV |       |
-                        display-name = "QWERTY";
+                        display-name = "QWRT";
                         bindings = <
    &none AS(Q) AS(W) AS(E) AS(R) AS(T)   AS(Y) AS(U) AS(I) AS(O) AS(P) &none
    &none AS(A) AS(S) AS(D) AS(F) AS(G)   AS(H) AS(J) AS(K) AS(L) &none &none
@@ -656,7 +656,7 @@
 // | ENG  | RU_YA   | RU_CHE | RU_ES| RU_EM | RU_I  | | RU_TE | RU_SOFT| RU_BE  | RU_YU   | RU_YO | RU_HARD|
 //               | SYSTEM | BSP/RU-SYM | DEL/NUM |   | TAB/FN | SPC/NAV |       |
 // * position 0 is transparent and inherits Escape from Graphite.
-                        display-name = "Russian";
+                        display-name = "RUS";
                         bindings = <
    &trans AS(Q) AS(W) AS(E) AS(R) AS(T)   AS(Y) AS(U) AS(I) AS(O) AS(P) AS(LBKT)
    &trans AS(A) AS(S) AS(D) AS(F) AS(G)   AS(H) AS(J) AS(K) AS(L) AS(SEMI) AS(SQT)
@@ -671,7 +671,7 @@
 // | TAB | ALT | GUI | SHFT| CTRL|     |   |     |  4  |  5  |  6  |  .  |  /  |
 // |     |  {  |  }  |  [  |  ]  |     |   |  .  |  1  |  2  |  3  |  =  |  *  |
 //                    |     |     |     |   |     |     |     |
-                        display-name = "Numbers";
+                        display-name = "NUM";
                         bindings = <
    &kp RET &kp LESS_THAN &kp GREATER_THAN &kp LPAR &kp RPAR &none   &kp EQUAL &kp N7 &kp N8 &kp N9 &none &kp MINUS
    &kp TAB &kp LALT &kp LGUI &kp LSHFT &kp LCTRL &none              &none &kp N4 &kp N5 &kp N6 &kp DOT &kp FSLH
@@ -686,7 +686,7 @@
 // | TAB | LALT | LGUI | LSFT | LCTL | MUTE  |   | PGDN | LEFT | DOWN | RGT |     | CTRL-T |
 // |     | VOLD | VOLU |      |      |       |   |      | P-TAB| N-TAB| P-DESK | N-DESK | INS |
 //                    |     |     |     |   |     |     |     |
-                        display-name = "Navigation";
+                        display-name = "NAV";
                         bindings = <
    &kp RET &kp C_PREV &kp C_NEXT &kp C_STOP &kp C_PP &kp C_VOICE_COMMAND   &kp PG_UP &kp HOME &kp UP &kp END &none &kp LC(W)
    &kp TAB &kp LALT &kp LGUI &kp LSHFT &kp LCTRL &kp C_MUTE               &kp PG_DN &kp LEFT &kp DOWN &kp RIGHT &none &kp LC(T)
@@ -701,7 +701,7 @@
 // | TAB | LALT | LGUI | LSFT | LCTL |      |   |      | RCTL | RSFT | RGUI | RALT |      |
 // |     | F11  | F12  | F13  | F14  | F15  |   | F16  | F17  | F18  | F19  | F20  |      |
 //                    |     |     |     |   |     |     |     |
-                        display-name = "Function";
+                        display-name = "FN";
                         bindings = <
    &kp RET &kp F1 &kp F2 &kp F3 &kp F4 &kp F5                 &kp F6 &kp F7 &kp F8 &kp F9 &kp F10 &none
    &kp TAB &kp LALT &kp LGUI &kp LSHFT &kp LCTRL &none        &none &kp RCTRL &kp RSHFT &kp RGUI &kp RALT &none
@@ -716,7 +716,7 @@
 // |     |     |     | M15 | M16 | M17 |   | M21 |  H  |  J  |  L  |     |     |
 // |     |     |     |     |     |     |   |     |     |     |     |     |     |
 //                    |     |     |     |   |     |     |     |
-                        display-name = "Vim";
+                        display-name = "VIM";
                         bindings = <
    &kp COLON &none &oryx_m11 &oryx_m12 &oryx_m13 &oryx_m14   &oryx_m18 &oryx_m19 &kp K &oryx_m20 &none &none
    &none &none &none &oryx_m15 &oryx_m16 &oryx_m17           &oryx_m21 &kp H &kp J &kp L &none &none
@@ -731,7 +731,7 @@
 // | M22 | M23 | M24 | M25 |  /  |  |  |   |  @  |  .  |  ,  |  !  |  ?  |  /  |
 // | M26 |  {  |  }  |  [  |  ]  |     |   |  '  |  \"  |  :  |  ;  |  =  |  *  |
 //                    |     |     |     |   | TAB/SYM-NUM | SPC/SMILES |     |
-                        display-name = "Symbols";
+                        display-name = "SYM";
                         bindings = <
    &kp GRAVE &kp LESS_THAN &kp GREATER_THAN &kp LPAR &kp RPAR &none   &kp HASH &kp UNDER &kp MINUS &kp FSLH &kp BSLH &kp MINUS
    &oryx_m22 &oryx_m23 &oryx_m24 &oryx_m25 &kp FSLH &kp PIPE         &kp AT &kp DOT &kp COMMA &kp EXCL &kp QMARK &kp FSLH
@@ -746,7 +746,7 @@
 // |     |     |     |     |     |     |   | M31 | M32 | M33 | M34 |     |     |
 // |     |     |     |     |     |     |   |     |     |     |     |     |     |
 //                    |     |     |     |   |     |     |     |
-                        display-name = "Smiles";
+                        display-name = "SMIL";
                         bindings = <
    &none &none &none &none &none &none   &oryx_m27 &oryx_m28 &oryx_m29 &oryx_m30 &none &none
    &none &none &none &none &none &none   &oryx_m31 &oryx_m32 &oryx_m33 &oryx_m34 &none &none
@@ -762,7 +762,7 @@
 // |     |     |     |     |     |     |   |     |  "  |  :  |  ;  |  =  |  *  |
 //                    |     |     |     |   | TAB/SYM-NUM | SPC/RU-SMILES |     |
 // Bindings preserve QMK HID usages and rely on Russian-PC on the host.
-                        display-name = "Russian Symbols";
+                        display-name = "RSYM";
                         bindings = <
    &none &none &none &kp LS(N9) &kp LS(N0) &none   &kp LS(N3) &kp LS(MINUS) &kp MINUS &kp LS(BSLH) &kp BSLH &kp MINUS
    &none &none &none &none &none &none              &none &kp FSLH &kp LS(FSLH) &kp LS(N1) &kp LS(N7) &kp LS(BSLH)
@@ -777,7 +777,7 @@
 // |     |     |     |     |     |     |   |     |  :) |  :( |     |     |     |
 // |     |     |     |     |     |     |   |     |     |     |     |     |     |
 //                    |     |     |     |   |     |     |     |
-                        display-name = "Russian Smiles";
+                        display-name = "RSMI";
                         bindings = <
    &none &none &none &none &none &none   &none &none &none &none &none &none
    &none &none &none &none &none &none   &none &russian_smile_happy &russian_smile_sad &none &none &none
@@ -792,7 +792,7 @@
 // |     | S+1 | S+2 | S+3 | S+4 | S+5 |   | S+6 | S+7 | S+8 | S+9 | S+0 |     |
 // |     |     |     |     |     |     |   |     |     |     |     |     |     |
 //                    |     |     |     |   |     |     |     |
-                        display-name = "Shift Digits";
+                        display-name = "SNUM";
                         bindings = <
    &none &none &none &none &none &none   &none &none &none &none &none &none
    &none &kp LS(N1) &kp LS(N2) &kp LS(N3) &kp LS(N4) &kp LS(N5)   &kp LS(N6) &kp LS(N7) &kp LS(N8) &kp LS(N9) &kp LS(N0) &none
@@ -807,7 +807,7 @@
 // |     |     |     |     |     |     |   |         | WINDOWS | MACOS | LINUX |     |     |
 // | CLEAR(hold 1500 ms)    |     |     |   |         |       |       |     |     |     |
 //                           |     |     |   |         |       |       |
-                        display-name = "System";
+                        display-name = "SYS";
                         bindings = <
    &bt BT_SEL 0 &bt BT_SEL 1 &bt BT_SEL 2 &bt BT_SEL 3 &bt BT_SEL 4 &none   &none &none &none &none &none &none
    &none &none &none &none &none &none                                          &none &os_set OS_WINDOWS &os_set OS_MACOS &os_set OS_LINUX &none &none

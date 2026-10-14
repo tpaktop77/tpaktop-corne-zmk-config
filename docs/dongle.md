@@ -18,7 +18,9 @@ The v2.2.3 advertisement protocol carries at most four bytes for the active-laye
 
 For this integration, normally only `tpaktop-corne-dongle.uf2` needs to be flashed. The left and right halves do not need new firmware, and a normal dongle update does not require `settings-reset-nice-nano-v2.uf2` or clearing a Bluetooth profile. Existing split and host bonds should remain intact.
 
-Peripheral battery fetching and host-side battery proxying remain disabled on ZMK v0.3 to avoid risking split discovery and input reliability with a dongle central and two BLE peripherals. Prospector still receives the keyboard name, layer, modifiers, WPM, active profile, and other central status, but actual left/right half battery percentages are unavailable.
+On master, peripheral battery fetching and host-side battery proxying remain disabled on ZMK v0.3 because two-peripheral discovery/input reliability is unproven. This test branch enables fetching and host-side proxy on the dongle only. The proxy is requested for computer battery monitoring and is not needed by Prospector. The first local candidate failed the owner's reliability test; the subsequent GitHub-built candidate was reported working, but full cold-start/reconnection acceptance is still pending.
+
+The [peripheral-battery experiment](prospector-battery-test.md) is built by the unchanged GitHub Actions pipeline on the explicitly selected test branch. Artifact names remain unchanged: identify the dongle UF2 by its branch, commit, and GitHub run. The halves and Scanner are unchanged. This does not fix `Unknown` or establish reliable input.
 
 ## Firmware artifact contents
 
@@ -79,7 +81,15 @@ The halves do not receive the active layer, OS profile, host Bluetooth profile, 
 3. If the link does not recover, repeat the complete settings reset on all three devices rather than on only one half.
 4. Reinstall the three operational UF2 files in dongle, left, right order.
 
-Battery-level fetching and proxy are intentionally disabled on the central: the dongle does not retrieve half battery levels, and each nice!view reads its own local battery.
+Master keeps central battery fetching and proxy disabled. This experimental branch enables both on the dongle; each nice!view still reads its own local battery. For a failed experiment restore verified working dongle firmware without settings reset or bond clearing.
+
+## Computer battery monitoring
+
+The dongle's battery proxy adds a BLE Battery Service with one Battery Level characteristic per peripheral, labelled `Peripheral 0` and `Peripheral 1` in ZMK v0.3. [zmk-battery-center](https://github.com/kot149/zmk-battery-center) reads those characteristics and their user descriptions. Connect the computer to the dongle over Bluetooth; a USB-only keyboard connection does not expose this BLE service. The computer does not connect directly to either half. No half or Scanner reflash is needed, and enabling the service does not require settings reset or clearing bonds. After updating the dongle, reconnect the existing BLE connection and restart the app if necessary; investigate stale GATT discovery separately rather than clearing bonds automatically.
+
+## Radio transmit power
+
+`CONFIG_BT_CTLR_TX_PWR_PLUS_8=y` selects a default BLE transmit power of +8 dBm on the nRF52840. This is about 6.3 mW of RF output, versus 1 mW at 0 dBm; it is not a 6.3-times range or total-power claim. It can improve link margin/range but increases radio current during transmission and does not improve receive sensitivity or a weak transmitter at the other end. On a USB-powered dongle the battery trade-off is less important; on battery-powered halves it matters. The existing setting is unchanged by the proxy integration.
 
 ## Updating the 6-column mapping fix
 

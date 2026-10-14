@@ -11,7 +11,7 @@ Pinned sources are ZMK v0.3 `edf5c0814fd3ea202e43aad2d68fd32e882a518c`, Zephyr `
 - The existing dongle was built successfully before edits. Its final `.config` has status advertising enabled, `TPAK`, `AUX`, two expected peripherals, and fetching disabled. `strings zephyr/zmk.elf` contains `TPAK`; this is build evidence, not an over-the-air capture or proof of physically installed firmware.
 - Status path: peripheral BAS notifications/reads -> ZMK split transport battery event -> central's indexed battery cache -> `zmk_peripheral_battery_state_changed` -> Prospector's peripheral battery cache -> packed 26-byte manufacturer status payload -> Scanner.
 - With fetching disabled, this peripheral event/data path is absent, explaining missing real half percentages. In AUX mode the module puts peripheral index 0 in the primary battery field (Left) and index 1 in the first peripheral battery field (Right). Physical mapping remains a hardware check.
-- Proxy adds a host-facing Battery Service and is not consumed by the Prospector listener. It is unnecessary for this path.
+- Proxy adds a host-facing Battery Service and is not consumed by the Prospector listener. It is unnecessary for Scanner, but the owner now explicitly requests it for zmk-battery-center. Pinned central_bas_proxy.c creates separate readable/notifiable Battery Levels with user descriptions Peripheral 0 and Peripheral 1. Existing halves already have BAS/local reporting enabled. The app requires a BLE host connection and enumerates all battery characteristics/descriptions; USB-only HID does not carry this service.
 - Name path: the configured string initializes the module's separate complete-local-name advertising data (AD type 0x09). Scanner caches names by BLE address/type and looks up that name on a subsequent manufacturer status packet. Its cache miss returns `Unknown`. The current hardware's reason for missing association is unproven; this experiment does not alter that path.
 
 ### Exact v0.3 compatibility assessment
@@ -28,14 +28,14 @@ There is nevertheless concrete residual risk in pinned `app/src/split/bluetooth/
 
 Goals: publish the isolated branch using the existing GitHub pipeline, preserve master keymap/settings, and record the earlier failed hardware test honestly.
 
-Non-goals: production fetching enablement, source backports, a Scanner/UI fix, repairing `Unknown`, new bonds, or changing normal USB/BLE host behavior.
+Non-goals: production promotion, source backports, a Scanner/UI fix, repairing `Unknown`, new bonds, or changing host behavior beyond the explicitly requested BLE Battery Service.
 
 ## Decisions
 
 1. Select the experiment by branch and enable fetching in that branch's dongle `.conf` so the existing pipeline actually builds it. Master stays fetching n. Retain the separate fragment for explicit reproduction; do not auto-load it or change the pipeline/matrix.
-2. The candidate changes only fetching from n to y; proxy remains n. Retain default peripheral mappings and all normal advertising options. Do not tune buffers or advertising timing while measuring fetching's effect.
+2. Fetching is already y in this branch. Now enable proxy y on the dongle and in the equivalent optional fragment for the owner's BLE host app; master stays unchanged. Retain peripheral mappings and all advertising options. Do not tune buffers, TX power, or timing. The app should read Peripheral 0/1; OS display support and stale GATT caches remain runtime checks, not reasons to clear bonds automatically.
 3. Commit/push only the test branch and wait for all four existing GitHub matrix targets. Keep archive format and UF2 names; distinguish the experiment by branch/commit/run. Half/reset outputs are validation only, not reflash instructions.
-4. Prior local and USB-log builds are historical evidence only. Do not build locally or hand out local UF2s for this branch. The owner reported visible batteries but glitchy input and unexpected layers/settings: reliability FAILED. Its cause is not yet proven; CI success is not a hardware fix.
+4. Prior local and USB-log builds are historical evidence only. Initial local reliability FAILED. Fetching-only commit 6c01bea completed all four targets in GitHub run 38519017685; the owner subsequently reported it installed and working. Full acceptance is still pending and the proxy change requires its own four-target GitHub run. Do not build locally or hand out local UF2s.
 
 ## Risks / Trade-offs
 

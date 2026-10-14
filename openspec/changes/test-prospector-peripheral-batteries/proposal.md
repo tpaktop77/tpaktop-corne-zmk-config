@@ -8,7 +8,7 @@ Prospector cannot show the two Corne battery levels while fetching is disabled o
 
 - Publish the isolated test branch from checked master and enable fetching only in that branch's dongle config; retain the separate fragment.
 - Use the unchanged four-target GitHub pipeline and artifact names; identify test firmware by branch, commit, and run. Record the earlier hardware reliability test as FAILED despite visible battery values.
-- Keep fetching disabled on master and battery proxy disabled in every variant. Reconcile the old blanket restriction with a narrowly scoped, unvalidated experiment.
+- Keep fetching and proxy disabled on master. In the test branch enable dongle proxy as explicitly requested for computer-side monitoring with zmk-battery-center; it is not a Prospector requirement. Reconcile the old restriction with this narrowly scoped experiment.
 - Record the already implemented Prospector identity/topology requirements without claiming to fix the separate `Unknown` defect.
 
 ## Capabilities
@@ -19,7 +19,7 @@ Prospector cannot show the two Corne battery levels while fetching is disabled o
 
 ### Modified Capabilities
 
-- `dongle-split-topology`: Retain the production fetching/proxy restriction while permitting a separately selected and named test of fetching alone.
+- `dongle-split-topology`: Retain the master fetching/proxy restriction while permitting test-branch fetching and explicitly requested host Battery Service proxying on the dongle.
 
 ## Impact
 

@@ -20,7 +20,7 @@ The dedicated dongle SHALL broadcast Prospector status with keyboard name `TPAK`
 - **AND** successful compilation alone is not evidence that the physical Scanner received the name
 
 ### Requirement: Battery fetching is an explicitly selected experiment
-An explicitly selected test branch SHALL fetch peripheral battery levels without host-side proxying using the existing pipeline and filenames. Branch, commit, and run SHALL identify test artifacts. Neither compilation nor visible batteries SHALL establish reliable keyboard input.
+An explicitly selected test branch SHALL fetch peripheral battery levels using the existing pipeline and filenames. Host proxy SHALL be independent of Scanner advertisements and enabled only for the owner's requested computer reporting. Branch, commit, and run SHALL identify artifacts; visible batteries SHALL NOT establish input reliability.
 
 #### Scenario: Build without selecting the experiment
 - **WHEN** the master build matrix is used
@@ -28,7 +28,7 @@ An explicitly selected test branch SHALL fetch peripheral battery levels without
 
 #### Scenario: Build the opt-in test
 - **WHEN** the owner explicitly selects the experimental branch
-- **THEN** fetching is enabled, proxy remains disabled, and existing filenames are preserved and branch/commit/run identify the test
+- **THEN** fetching and the owner-requested host proxy are enabled only on the dongle, and branch/commit/run identify the test with preserved filenames
 - **AND** the halves and Scanner require no firmware changes for this experiment
 
 #### Scenario: Evaluate the test

@@ -7,8 +7,8 @@
 
 ## 2. Integration validation and handoff
 
-- [ ] 2.1 Commit/push only the test branch and wait for all four unchanged GitHub Actions matrix targets; record actual results for the exact pushed commit.
-- [ ] 2.2 Inspect GitHub source/config selection, all warnings, and existing artifact filenames, then provide the exact run and commit instead of local UF2 files.
+- [x] 2.1 Commit/push only the test branch and wait for all four unchanged GitHub Actions matrix targets; record actual results for the exact pushed commit. Proxy commit 7b48b2a passed run 38526322237.
+- [x] 2.2 Inspect GitHub source/config selection, all warnings, and existing artifact filenames, then provide the exact run and commit instead of local UF2 files. Final configs and central-only proxy verified; new upstream -Wint-conversion warning recorded without suppression.
 - [x] 2.3 Run strict OpenSpec and whitespace checks and inspect the staged scope before committing; leave unresolved hardware acceptance open.
 
 ## 3. Owner hardware validation

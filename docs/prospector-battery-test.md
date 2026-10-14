@@ -69,7 +69,7 @@ For rollback use the owner's last verified working dongle image, or an independe
 
 The previous local phase compiled all four targets plus fetching/USB-log variants successfully. It verified `TPAK/AUX`, central-only module membership, peripheral Battery Services, and a control/candidate Kconfig difference limited to fetching plus its two-event queue. These are historical build results, NOT GitHub validation of the new branch and NOT a passed hardware test.
 
-Fetching-only commit `6c01bea` completed all four GitHub jobs successfully. The subsequent proxy change requires its own exact pushed commit to complete all four build jobs; its host-side runtime check remains pending. Existing warnings from the earlier pinned build were not suppressed:
+Fetching-only commit `6c01bea` completed all four GitHub jobs successfully. Proxy commit `7b48b2a1eac296de630a8fd3608d5a1b3b661a5c` also passed all four targets in [GitHub run 38526322237](https://github.com/tpaktop77/tpaktop-corne-zmk-config/actions/runs/38526322237). Host-side runtime acceptance remains pending. Existing warnings were not suppressed:
 
 - Deprecated `config/boards` and `NRF_STORE_REBOOT_TYPE_GPREGRET`.
 - Unknown `tpak` vendor prefix for existing OS behavior bindings.
@@ -77,7 +77,20 @@ Fetching-only commit `6c01bea` completed all four GitHub jobs successfully. The 
 - Peripheral `ZMK_USB=y` defaults resolving to n because the halves are peripherals.
 - Reset-image zero-size keymap initializer/array-bounds warnings.
 
-The candidate added no warning messages compared with its local control. GitHub warnings must be checked independently. A passing compiler does not establish runtime safety.
+The earlier fetching-only candidate added no warning messages compared with its local control. Enabling proxy additionally compiles upstream `central_bas_proxy.c` and produces `-Wint-conversion` in its generated characteristic initializer: the peripheral index is placed in `user_data`, then converted back by the read handler. This new warning is visible, not suppressed or patched. A passing compiler does not establish runtime safety.
+
+### Verified proxy GitHub build
+
+| Target | Result |
+|---|---|
+| `tpaktop-corne-dongle` | success |
+| `corne-left-peripheral` | success |
+| `corne-right-peripheral` | success |
+| `settings-reset-nice-nano-v2` | success, compile only |
+
+The existing pipeline produced archive `corne-dongle-firmware_20261014_0707` (GitHub artifact ID `11876620494`). Its firmware source is proxy commit `7b48b2a`, not a later documentation-only commit.
+
+The dongle job log confirms fetching y, proxy y, `TPAK`, `AUX`, two expected peripherals, transmit power 8 dBm, the configured dongle keymap, and compilation of `central_bas_proxy.c.obj`. Dependency checkout lines confirm ZMK `edf5c08`, Zephyr `dacab487`, and Prospector `72a71ae`, matching the full pinned hashes above. Both half job logs confirm BAS/reporting y and no central role, proxy, or Prospector advertiser. Reset also has no proxy/advertiser. Keymap, OS behaviors, half configs, west manifest, build matrix, workflow, and Scanner repository are unchanged by the proxy commit.
 
 ## Hardware checklist
 

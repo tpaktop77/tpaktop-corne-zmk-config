@@ -3,15 +3,17 @@ manifest:
     - name: zmkfirmware
       url-base: https://github.com/zmkfirmware
     - name: prospector
-      url-base: https://github.com/t-ogura
+      url-base: https://github.com/tpaktop77
   projects:
     - name: zmk
       remote: zmkfirmware
       revision: v0.3
       import: app/west.yml
+    # Fork of t-ogura/prospector-zmk-module v2.2.3 with the scanner-name fix
+    # (branch 20261018__fix_scanner_name_tpak).
     - name: prospector-zmk-module
       remote: prospector
-      revision: v2.2.3
+      revision: af1c531849ddb9ec253944dee91f799a6c932aa7
       path: modules/prospector-zmk-module
   self:
     path: config

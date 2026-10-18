@@ -8,7 +8,7 @@
 ## 2. Keyboard configuration
 
 - [x] 2.1 Point `config/west.yml` at the fork, pinned by full commit hash.
-- [ ] 2.2 Push the branch and confirm all four GitHub Actions targets pass. Inspect the dongle log for the fork checkout and for new warnings.
+- [x] 2.2 Push the branch and confirm all four GitHub Actions targets pass. Inspect the dongle log for the fork checkout and for new warnings. Commit 466c76d passed all four targets in run 39099818090 (artifact `corne-dongle-firmware_20261018_0513`). The log shows the module checked out at af1c531. The only warning in the patched file is the pre-existing unused `wpm_start_time`.
 
 ## 3. Owner hardware validation
 

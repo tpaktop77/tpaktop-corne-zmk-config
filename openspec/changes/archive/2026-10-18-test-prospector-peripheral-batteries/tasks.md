@@ -13,10 +13,10 @@
 
 ## 3. Owner hardware validation
 
-- [ ] 3.1 Following the owner's report that GitHub fetching-only firmware works, verify full individual/simultaneous input after cold starts, half power cycles, and reconnects; do not count initial local failure or a single working report as full acceptance.
-- [ ] 3.2 Owner verifies both battery values, physical left/right mapping, updates, and off/on/reboot behavior against each half's local display; records acceptance or rollback.
-- [ ] 3.3 Owner records TPAK/Unknown behavior across Scanner/dongle cold boots, independent reboots, and repeated advertisements without treating this battery experiment as a name fix.
-- [ ] 3.4 Owner verifies zmk-battery-center discovers both proxy levels over the existing BLE host connection and receives updates, while input and Prospector status remain reliable.
+- [x] 3.1 Following the owner's report that GitHub fetching-only firmware works, verify full individual/simultaneous input after cold starts, half power cycles, and reconnects; do not count initial local failure or a single working report as full acceptance. Owner accepted on 2026-10-18.
+- [x] 3.2 Owner verifies both battery values, physical left/right mapping, updates, and off/on/reboot behavior against each half's local display; records acceptance or rollback. Owner accepted on 2026-10-18.
+- [x] 3.3 Owner records TPAK/Unknown behavior across Scanner/dongle cold boots, independent reboots, and repeated advertisements without treating this battery experiment as a name fix. Owner reported on 2026-10-18 that Scanner still shows the wrong name; the fix is out of scope here.
+- [x] 3.4 Owner verifies zmk-battery-center discovers both proxy levels over the existing BLE host connection and receives updates, while input and Prospector status remain reliable. Owner accepted on 2026-10-18.
 
 ## Workflow follow-up
 

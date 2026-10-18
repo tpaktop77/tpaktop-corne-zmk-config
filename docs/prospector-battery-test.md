@@ -8,6 +8,12 @@ The existing `build.yaml` and GitHub workflow are unchanged. This branch enables
 
 Keymap, OS behaviors, split topology, host profiles, half firmware configuration, Scanner repository, and dependencies are unchanged from master. Only the dedicated central advertises Prospector status; Scanner remains an independent observer, never a split member.
 
+## Owner acceptance (2026-10-18)
+
+The owner confirmed that the merged fetching + proxy firmware works on hardware. Prospector shows both half batteries, and zmk-battery-center reads the proxied levels. Both fetching and proxy are now enabled on `master` (merged in PR #7). The text below that says master keeps them disabled describes the branch before the merge.
+
+Scanner still shows the wrong keyboard name (`Unknown` instead of `TPAK`). That is a separate problem and was not addressed by this change.
+
 ## Current hardware evidence
 
 The owner tested the previous local candidate and reported:
